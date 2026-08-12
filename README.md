@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Knots and Keeps
 
-## Getting Started
+A premium, full-stack e-commerce platform for handmade bracelets. Built with Next.js, Tailwind CSS, and Supabase.
 
-First, run the development server:
+## Features Built
+- **Customer Storefront:** Responsive Home page, Shop catalog, and Product detail pages.
+- **Admin Panel:** Protected dashboard to manage products.
+- **Product Management:** Create products, upload images (Supabase Storage), manage stock, and auto-calculate discounts.
+- **Database & Auth:** Supabase PostgreSQL with Row Level Security (RLS) and Supabase Auth.
 
+## Setup Instructions
+
+### 1. Install Dependencies
+Make sure you are in the project root:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Configure Supabase
+1. Create a new project on [Supabase](https://supabase.com/).
+2. Go to the **SQL Editor** in your Supabase dashboard.
+3. Copy the contents of `supabase-schema.sql` (found in the root folder) and run it. This will create the tables, RLS policies, and storage buckets.
+4. Optional: Run `seed-demo.sql` to populate some demo products.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Environment Variables
+Copy `.env.example` to `.env.local`:
+```bash
+cp .env.example .env.local
+```
+Fill in your Supabase credentials:
+- `NEXT_PUBLIC_SUPABASE_URL` (Project URL)
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` (Anon public key)
+- `ADMIN_EMAIL` (Set this to the email you will use for your admin account)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Create your Admin Account
+1. Start the local server:
+   ```bash
+   npm run dev
+   ```
+2. Navigate to `http://localhost:3000/login`
+3. Enter your email and a password, and click **Sign Up**.
+4. Important: If your email matches the `ADMIN_EMAIL` in `.env.local`, you will have access to the `/admin` routes.
+5. In your Supabase SQL Editor, run this quick command to give yourself full admin database rights:
+   ```sql
+   UPDATE public.profiles SET role = 'admin' WHERE email = 'your-email@example.com';
+   ```
 
-## Learn More
+### 5. Managing Products & Images
+1. Log in to `http://localhost:3000/admin`
+2. Go to **Products -> Create Product**.
+3. Fill out the details, upload images, set stock, and hit **Save Product**.
+4. Visit `http://localhost:3000/shop` to see your live product!
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Production Deployment
+You can deploy this directly to Vercel. Ensure you add the environment variables in your Vercel project settings before deploying.
