@@ -7,9 +7,10 @@ export default async function EditProductPage({
   params,
   searchParams
 }: { 
-  params: { id: string }
+  params: Promise<{ id: string }>
   searchParams: Promise<{ error?: string }>
 }) {
+  const { id } = await params
   const { error } = await searchParams
   const supabase = await createClient()
 
@@ -25,7 +26,7 @@ export default async function EditProductPage({
       *,
       product_images (id, url, is_primary, display_order)
     `)
-    .eq('id', params.id)
+    .eq('id', id)
     .single()
 
   if (!product) {

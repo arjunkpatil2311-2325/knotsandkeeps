@@ -173,45 +173,53 @@ export async function updateProduct(formData: FormData) {
     .update(updatePayload)
     .eq('id', id)
 
-  if (updateError) {
-    console.error('Error updating product:', updateError)
-    redirect(`/admin/products/edit/${id}?error=${encodeURIComponent(updateError.message || 'Failed to update product')}`)
-  }
+  try {
+    if (updateError) {
+      console.error('Error updating product:', updateError)
+      redirect(`/admin/products/edit/${id}?error=${encodeURIComponent(updateError.message || 'Failed to update product')}`)
+    }
 
-  // Handle new image uploads
-  const images = formData.getAll('images') as File[]
-  
-  if (images && images.length > 0) {
-    // Get existing max display_order
-    const { data: existingImages } = await supabase.from('product_images').select('display_order').eq('product_id', id).order('display_order', { ascending: false }).limit(1)
-    let nextOrder = existingImages && existingImages.length > 0 ? existingImages[0].display_order + 1 : 0
+    // Handle new image uploads
+    const images = formData.getAll('images') as File[]
+    
+    if (images && images.length > 0) {
+      // Get existing max display_order
+      const { data: existingImages } = await supabase.from('product_images').select('display_order').eq('product_id', id).order('display_order', { ascending: false }).limit(1)
+      let nextOrder = existingImages && existingImages.length > 0 ? existingImages[0].display_order + 1 : 0
 
-    for (let i = 0; i < images.length; i++) {
-      const image = images[i]
-      if (image.size === 0) continue
+      for (let i = 0; i < images.length; i++) {
+        const image = images[i]
+        if (!image || typeof image === 'string' || image.size === 0 || !image.name) continue
 
-      const fileExt = image.name.split('.').pop()
-      const fileName = `${id}-${Date.now()}-${i}.${fileExt}`
-      
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('product-images')
-        .upload(fileName, image)
-
-      if (!uploadError && uploadData) {
-        const { data: { publicUrl } } = supabase.storage
+        const fileExt = image.name.split('.').pop()
+        const fileName = `${id}-${Date.now()}-${i}.${fileExt}`
+        
+        const { data: uploadData, error: uploadError } = await supabase.storage
           .from('product-images')
-          .getPublicUrl(fileName)
+          .upload(fileName, image)
 
-        await supabase.from('product_images').insert({
-          product_id: id,
-          url: publicUrl,
-          is_primary: nextOrder === 0 && i === 0,
-          display_order: nextOrder + i
-        })
+        if (!uploadError && uploadData) {
+          const { data: { publicUrl } } = supabase.storage
+            .from('product-images')
+            .getPublicUrl(fileName)
+
+          await supabase.from('product_images').insert({
+            product_id: id,
+            url: publicUrl,
+            is_primary: nextOrder === 0 && i === 0,
+            display_order: nextOrder + i
+          })
+        }
       }
     }
-  }
 
-  revalidatePath('/admin/products')
-  redirect('/admin/products')
+    revalidatePath('/admin/products')
+    redirect('/admin/products')
+  } catch (error: any) {
+    if (error && error.digest && error.digest.startsWith('NEXT_REDIRECT')) {
+      throw error // Let Next.js handle redirect
+    }
+    console.error('Error in updateProduct action:', error)
+    redirect(`/admin/products/edit/${id}?error=${encodeURIComponent(error.message || 'An unexpected error occurred')}`)
+  }
 } 
