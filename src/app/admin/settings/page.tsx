@@ -1,7 +1,13 @@
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
 
-export default async function AdminSettingsPage() {
+export default async function AdminSettingsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ success?: string; error?: string }>
+}) {
+  const { success, error } = await searchParams
   const supabase = await createClient()
 
   const { data: settings } = await supabase
@@ -16,45 +22,73 @@ export default async function AdminSettingsPage() {
     const is_100_percent_enabled = formData.get('is_100_percent_enabled') === 'on'
     const is_50_percent_enabled = formData.get('is_50_percent_enabled') === 'on'
 
-    const delivery_normal_charge = parseFloat(formData.get('delivery_normal_charge') as string) || 0
-    const delivery_free_threshold = parseFloat(formData.get('delivery_free_threshold') as string) || null
-    const delivery_fast_charge = parseFloat(formData.get('delivery_fast_charge') as string) || 0
+    const normal_delivery_charge = parseFloat(formData.get('delivery_normal_charge') as string) || 0
+    const free_delivery_threshold = parseFloat(formData.get('delivery_free_threshold') as string) || null
+    const fast_delivery_charge = parseFloat(formData.get('delivery_fast_charge') as string) || 0
 
-    const supabaseServer = await createClient()
-    
-    // Check if we need to update or insert (we have a row from migration, but just in case)
-    const { data: existing } = await supabaseServer.from('payment_settings').select('id').single()
-    
-    if (existing) {
-      await supabaseServer.from('payment_settings').update({
-        payment_instructions,
-        qr_image_url,
-        is_100_percent_enabled,
-        is_50_percent_enabled,
-        delivery_normal_charge,
-        delivery_free_threshold,
-        delivery_fast_charge,
-        updated_at: new Date().toISOString()
-      }).eq('id', existing.id)
-    } else {
-      await supabaseServer.from('payment_settings').insert({
-        payment_instructions,
-        qr_image_url,
-        is_100_percent_enabled,
-        is_50_percent_enabled,
-        delivery_normal_charge,
-        delivery_free_threshold,
-        delivery_fast_charge
-      })
+    try {
+      const supabaseServer = await createClient()
+      
+      // Check if we need to update or insert
+      const { data: existing } = await supabaseServer.from('payment_settings').select('id').single()
+      
+      let dbError;
+      if (existing) {
+        const { error } = await supabaseServer.from('payment_settings').update({
+          payment_instructions,
+          qr_image_url,
+          is_100_percent_enabled,
+          is_50_percent_enabled,
+          normal_delivery_charge,
+          free_delivery_threshold,
+          fast_delivery_charge,
+          updated_at: new Date().toISOString()
+        }).eq('id', existing.id)
+        dbError = error
+      } else {
+        const { error } = await supabaseServer.from('payment_settings').insert({
+          payment_instructions,
+          qr_image_url,
+          is_100_percent_enabled,
+          is_50_percent_enabled,
+          normal_delivery_charge,
+          free_delivery_threshold,
+          fast_delivery_charge
+        })
+        dbError = error
+      }
+
+      if (dbError) {
+        throw new Error(dbError.message)
+      }
+
+      revalidatePath('/admin/settings')
+      revalidatePath('/checkout')
+      redirect('/admin/settings?success=true')
+    } catch (err: any) {
+      if (err && err.digest && err.digest.startsWith('NEXT_REDIRECT')) {
+        throw err
+      }
+      console.error('Error updating settings:', err)
+      redirect(`/admin/settings?error=${encodeURIComponent(err.message || 'Failed to save settings')}`)
     }
-    
-    revalidatePath('/admin/settings')
-    revalidatePath('/checkout')
   }
 
   return (
     <div className="max-w-4xl">
       <h1 className="text-3xl font-black text-black tracking-tight mb-6">Settings</h1>
+
+      {success && (
+        <div className="mb-6 bg-green-100 border-2 border-black text-black px-4 py-3 rounded-lg relative font-bold" role="alert">
+          <span className="block sm:inline">Settings saved successfully!</span>
+        </div>
+      )}
+
+      {error && (
+        <div className="mb-6 bg-red-100 border-2 border-black text-black px-4 py-3 rounded-lg relative font-bold" role="alert">
+          <span className="block sm:inline">{error}</span>
+        </div>
+      )}
 
       <div className="bg-white border-2 border-black shadow-[4px_4px_0_0_#000] rounded-xl">
         <div className="px-6 py-5 border-b-2 border-black">
@@ -150,7 +184,7 @@ export default async function AdminSettingsPage() {
                         type="number"
                         step="0.01"
                         name="delivery_normal_charge"
-                        defaultValue={settings?.delivery_normal_charge || 100}
+                        defaultValue={settings?.normal_delivery_charge ?? 100}
                         className="block w-full bg-white border-2 border-black rounded-lg shadow-[inset_2px_2px_0px_0px_rgba(0,0,0,0.05)] p-3 font-bold text-black focus:ring-0 focus:border-black placeholder-black/50"
                       />
                     </div>
@@ -162,7 +196,7 @@ export default async function AdminSettingsPage() {
                         type="number"
                         step="0.01"
                         name="delivery_free_threshold"
-                        defaultValue={settings?.delivery_free_threshold || ''}
+                        defaultValue={settings?.free_delivery_threshold ?? ''}
                         className="block w-full bg-white border-2 border-black rounded-lg shadow-[inset_2px_2px_0px_0px_rgba(0,0,0,0.05)] p-3 font-bold text-black focus:ring-0 focus:border-black placeholder-black/50"
                         placeholder="Leave blank for no free tier"
                       />
@@ -175,7 +209,7 @@ export default async function AdminSettingsPage() {
                         type="number"
                         step="0.01"
                         name="delivery_fast_charge"
-                        defaultValue={settings?.delivery_fast_charge || 250}
+                        defaultValue={settings?.fast_delivery_charge ?? 250}
                         className="block w-full bg-white border-2 border-black rounded-lg shadow-[inset_2px_2px_0px_0px_rgba(0,0,0,0.05)] p-3 font-bold text-black focus:ring-0 focus:border-black placeholder-black/50"
                       />
                     </div>
