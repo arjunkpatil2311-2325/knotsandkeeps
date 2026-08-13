@@ -146,33 +146,36 @@ export async function updateProduct(formData: FormData) {
   const is_new_arrival = formData.get('is_new_arrival') === 'on'
   const show_on_homepage = formData.get('show_on_homepage') === 'on'
 
-  const tagsString = formData.get('tags') as string
-  const tags = tagsString ? tagsString.split(',').map(t => t.trim()) : []
+  const updatePayload: any = {
+    name,
+    slug,
+    short_description,
+    description,
+    price,
+    compare_at_price,
+    stock_quantity,
+    sku,
+    status,
+    category_id,
+    is_featured,
+    is_bestseller,
+    is_new_arrival,
+    show_on_homepage
+  }
+
+  if (formData.has('tags')) {
+    const tagsString = formData.get('tags') as string
+    updatePayload.tags = tagsString ? tagsString.split(',').map(t => t.trim()) : []
+  }
 
   const { error: updateError } = await supabase
     .from('products')
-    .update({
-      name,
-      slug,
-      short_description,
-      description,
-      price,
-      compare_at_price,
-      stock_quantity,
-      sku,
-      status,
-      category_id,
-      is_featured,
-      is_bestseller,
-      is_new_arrival,
-      show_on_homepage,
-      tags
-    })
+    .update(updatePayload)
     .eq('id', id)
 
   if (updateError) {
     console.error('Error updating product:', updateError)
-    throw new Error('Failed to update product: ' + updateError.message)
+    redirect(`/admin/products/edit/${id}?error=${encodeURIComponent(updateError.message || 'Failed to update product')}`)
   }
 
   // Handle new image uploads

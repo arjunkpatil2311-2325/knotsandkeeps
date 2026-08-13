@@ -3,7 +3,14 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { updateProduct } from '../../actions'
 
-export default async function EditProductPage({ params }: { params: { id: string } }) {
+export default async function EditProductPage({ 
+  params,
+  searchParams
+}: { 
+  params: { id: string }
+  searchParams: Promise<{ error?: string }>
+}) {
+  const { error } = await searchParams
   const supabase = await createClient()
 
   // Ensure user is admin
@@ -37,6 +44,12 @@ export default async function EditProductPage({ params }: { params: { id: string
         <h1 className="text-3xl font-black text-black tracking-tight">Edit Product</h1>
         <p className="mt-1 text-sm text-black font-bold">Update product details and inventory.</p>
       </div>
+
+      {error && (
+        <div className="mb-6 bg-red-100 border-2 border-black text-black px-4 py-3 rounded-lg relative font-bold" role="alert">
+          <span className="block sm:inline">{error}</span>
+        </div>
+      )}
 
       <form action={updateProduct} className="space-y-8 divide-y-2 divide-black bg-white border-2 border-black shadow-[4px_4px_0_0_#000] rounded-xl p-6 sm:p-8">
         <input type="hidden" name="id" value={product.id} />
