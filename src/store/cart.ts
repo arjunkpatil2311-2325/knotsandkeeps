@@ -72,7 +72,7 @@ export const useCartStore = create<CartStore>()(
       }
     }),
     {
-      name: 'knots-and-keeps-cart', // name of the item in the storage (must be unique)
+      name: 'threeknots-cart', // name of the item in the storage (must be unique)
     }
   )
 )

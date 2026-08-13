@@ -169,17 +169,17 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
   return (
     <div className="space-y-6 max-w-5xl">
       <div className="flex items-center gap-4 mb-6 flex-wrap">
-        <Link href="/admin/orders" className="text-gray-500 hover:text-black">
-          <ArrowLeft className="w-5 h-5" />
+        <Link href="/admin/orders" className="text-black bg-white border-2 border-black p-2 rounded-lg shadow-[2px_2px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all">
+          <ArrowLeft className="w-5 h-5 font-bold" />
         </Link>
-        <h1 className="text-2xl font-semibold text-gray-900">Order {order.order_number}</h1>
-        <span className="px-3 py-1 bg-gray-100 text-sm font-medium rounded-full ml-auto">
+        <h1 className="text-3xl font-black text-black tracking-tight">Order {order.order_number}</h1>
+        <span className="px-3 py-1 bg-white text-black border-2 border-black text-sm font-bold rounded-lg ml-auto shadow-[2px_2px_0_0_#000]">
           {new Date(order.created_at).toLocaleString()}
         </span>
         <Link 
           href={`/invoice/${order.order_number}`}
           target="_blank" 
-          className="ml-2 inline-flex items-center gap-1 bg-white border border-gray-300 text-gray-700 px-3 py-1 rounded text-sm hover:bg-gray-50 font-medium"
+          className="ml-2 inline-flex items-center gap-2 bg-neo-blue border-2 border-black text-black px-4 py-1.5 rounded-lg text-sm font-bold shadow-[2px_2px_0_0_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
         >
           <Receipt className="w-4 h-4" /> View Invoice
         </Link>
@@ -190,47 +190,47 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
         {/* Left Column (Items & Status) */}
         <div className="lg:col-span-2 space-y-6">
           
-          <div className="bg-white shadow rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-medium mb-4 flex items-center gap-2"><Package className="w-5 h-5"/> Items</h2>
+          <div className="bg-white border-2 border-black shadow-[4px_4px_0_0_#000] rounded-xl p-6 text-black">
+            <h2 className="text-lg font-black mb-4 flex items-center gap-2 text-black uppercase tracking-wider"><Package className="w-5 h-5"/> Items</h2>
             <div className="space-y-4">
               {order.order_items.map((item: any) => (
-                <div key={item.id} className="flex justify-between py-2 border-b border-gray-50 last:border-0">
+                <div key={item.id} className="flex justify-between py-2 border-b-2 border-black last:border-0">
                   <div>
-                    <p className="font-medium text-gray-900">{item.product_name}</p>
-                    <p className="text-sm text-gray-500">₹{item.price} x {item.quantity}</p>
+                    <p className="font-bold text-black">{item.product_name}</p>
+                    <p className="text-sm text-black font-bold">₹{item.price} x {item.quantity}</p>
                   </div>
-                  <p className="font-medium">₹{(item.price * item.quantity).toFixed(2)}</p>
+                  <p className="font-black text-black">₹{(item.price * item.quantity).toFixed(2)}</p>
                 </div>
               ))}
             </div>
-            <div className="mt-6 pt-4 border-t border-gray-100 text-sm space-y-2">
-              <div className="flex justify-between text-gray-600">
+            <div className="mt-6 pt-4 border-t-2 border-black text-sm space-y-2">
+              <div className="flex justify-between font-bold text-black">
                 <span>Subtotal</span>
                 <span>₹{order.subtotal.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between text-gray-600">
+              <div className="flex justify-between font-bold text-black">
                 <span>Delivery ({order.delivery_method})</span>
                 <span>₹{order.delivery_charge.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between font-bold text-lg pt-2">
+              <div className="flex justify-between font-black text-xl pt-2 text-black">
                 <span>Total</span>
                 <span>₹{order.total_amount.toFixed(2)}</span>
               </div>
             </div>
           </div>
 
-          <div className="bg-white shadow rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-medium mb-4 flex items-center gap-2"><Truck className="w-5 h-5"/> Order Status & Tracking</h2>
+          <div className="bg-white border-2 border-black shadow-[4px_4px_0_0_#000] rounded-xl p-6 text-black">
+            <h2 className="text-lg font-black mb-4 flex items-center gap-2 text-black uppercase tracking-wider"><Truck className="w-5 h-5"/> Order Status & Tracking</h2>
             
             {order.payment_status === 'pending' ? (
-              <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-md text-yellow-800 text-sm font-medium">
+              <div className="mb-6 p-4 bg-neo-yellow border-2 border-black rounded-xl text-black font-bold shadow-[2px_2px_0_0_#000]">
                 Please verify the payment before updating order status.
               </div>
             ) : (
               <form action={updateOrderStatus} className="flex items-end gap-4 mb-6">
                 <div className="flex-1">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Update Status</label>
-                  <select name="status" defaultValue={order.order_status} className="w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-black focus:border-black">
+                  <label className="block text-sm font-black text-black mb-1">Update Status</label>
+                  <select name="status" defaultValue={order.order_status} className="w-full bg-white border-2 border-black rounded-lg shadow-[inset_2px_2px_0px_0px_rgba(0,0,0,0.05)] p-2 font-bold focus:ring-0 focus:border-black text-black">
                     <option value="pending_payment">Pending Payment</option>
                     <option value="payment_confirmed">Payment Confirmed</option>
                     <option value="processing">Processing</option>
@@ -241,27 +241,27 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
                     <option value="cancelled">Cancelled</option>
                   </select>
                 </div>
-                <button type="submit" className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800">Save</button>
+                <button type="submit" className="bg-neo-yellow border-2 border-black text-black px-4 py-2 rounded-lg font-bold shadow-[2px_2px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all">Save</button>
               </form>
             )}
 
-            <form action={updateTracking} className="space-y-4 pt-4 border-t border-gray-100">
-              <h3 className="font-medium text-sm">Shipping Information</h3>
+            <form action={updateTracking} className="space-y-4 pt-4 border-t-2 border-black">
+              <h3 className="font-black text-sm text-black uppercase tracking-wider">Shipping Information</h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">Courier Name</label>
-                  <input name="courier_name" defaultValue={order.courier_name || ''} className="w-full border-gray-300 rounded shadow-sm p-2 border text-sm" placeholder="e.g. Bluedart" />
+                  <label className="block text-xs text-black font-bold mb-1">Courier Name</label>
+                  <input name="courier_name" defaultValue={order.courier_name || ''} className="w-full bg-white border-2 border-black rounded-lg shadow-[inset_2px_2px_0px_0px_rgba(0,0,0,0.05)] p-2 font-bold focus:ring-0 focus:border-black text-black" placeholder="e.g. Bluedart" />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">Tracking Number</label>
-                  <input name="tracking_number" defaultValue={order.tracking_number || ''} className="w-full border-gray-300 rounded shadow-sm p-2 border text-sm" />
+                  <label className="block text-xs text-black font-bold mb-1">Tracking Number</label>
+                  <input name="tracking_number" defaultValue={order.tracking_number || ''} className="w-full bg-white border-2 border-black rounded-lg shadow-[inset_2px_2px_0px_0px_rgba(0,0,0,0.05)] p-2 font-bold focus:ring-0 focus:border-black text-black" />
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-xs text-gray-500 mb-1">Tracking URL</label>
-                  <input name="tracking_url" defaultValue={order.tracking_url || ''} className="w-full border-gray-300 rounded shadow-sm p-2 border text-sm" />
+                  <label className="block text-xs text-black font-bold mb-1">Tracking URL</label>
+                  <input name="tracking_url" defaultValue={order.tracking_url || ''} className="w-full bg-white border-2 border-black rounded-lg shadow-[inset_2px_2px_0px_0px_rgba(0,0,0,0.05)] p-2 font-bold focus:ring-0 focus:border-black text-black" />
                 </div>
               </div>
-              <button type="submit" className="bg-gray-100 text-gray-800 px-4 py-2 rounded text-sm font-medium hover:bg-gray-200">Update Tracking</button>
+              <button type="submit" className="bg-white border-2 border-black text-black px-4 py-2 rounded-lg font-bold shadow-[2px_2px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all">Update Tracking</button>
             </form>
 
           </div>
@@ -270,16 +270,16 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
         {/* Right Column (Customer & Payment) */}
         <div className="space-y-6">
           
-          <div className="bg-white shadow rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-medium mb-4">Customer Details</h2>
-            <div className="space-y-3 text-sm">
-              <p><span className="text-gray-500">Name:</span> {order.customer_name}</p>
-              <p><span className="text-gray-500">Email:</span> {order.customer_email}</p>
-              <p><span className="text-gray-500">Phone:</span> {order.customer_phone}</p>
+          <div className="bg-white border-2 border-black shadow-[4px_4px_0_0_#000] rounded-xl p-6 text-black">
+            <h2 className="text-lg font-black mb-4 text-black uppercase tracking-wider">Customer Details</h2>
+            <div className="space-y-3 text-sm font-bold">
+              <p><span>Name:</span> <span className="font-black">{order.customer_name}</span></p>
+              <p><span>Email:</span> <span className="font-black">{order.customer_email}</span></p>
+              <p><span>Phone:</span> <span className="font-black">{order.customer_phone}</span></p>
             </div>
-            <div className="mt-4 pt-4 border-t border-gray-100 space-y-3 text-sm">
-              <p className="font-medium mb-1">Shipping Address</p>
-              <p className="text-gray-600">
+            <div className="mt-4 pt-4 border-t-2 border-black space-y-3 text-sm">
+              <p className="font-black mb-1 text-black uppercase tracking-wider">Shipping Address</p>
+              <p className="font-bold leading-relaxed">
                 {order.shipping_address}<br/>
                 {order.shipping_city}, {order.shipping_state} {order.shipping_zip}<br/>
                 {order.shipping_country}
@@ -287,52 +287,52 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
             </div>
           </div>
 
-          <div className="bg-white shadow rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-medium mb-4 flex items-center gap-2"><Receipt className="w-5 h-5"/> Payment</h2>
+          <div className="bg-white border-2 border-black shadow-[4px_4px_0_0_#000] rounded-xl p-6 text-black">
+            <h2 className="text-lg font-black mb-4 flex items-center gap-2 text-black uppercase tracking-wider"><Receipt className="w-5 h-5"/> Payment</h2>
             
-            <div className="space-y-3 text-sm">
-              <p className="flex justify-between"><span className="text-gray-500">Method:</span> <span className="font-medium capitalize">{order.payment_method}</span></p>
-              <p className="flex justify-between"><span className="text-gray-500">Status:</span> 
-                <span className={`font-medium ${order.payment_status === 'fully_paid' ? 'text-green-600' : order.payment_status === 'verification_required' ? 'text-orange-600 animate-pulse' : 'text-blue-600'}`}>
+            <div className="space-y-3 text-sm font-bold">
+              <p className="flex justify-between"><span>Method:</span> <span className="font-black capitalize">{order.payment_method}</span></p>
+              <p className="flex justify-between"><span>Status:</span> 
+                <span className={`font-black ${order.payment_status === 'fully_paid' ? 'text-green-600' : order.payment_status === 'verification_required' ? 'text-red-600 animate-pulse' : 'text-blue-600'}`}>
                   {order.payment_status.replace('_', ' ')}
                 </span>
               </p>
-              <p className="flex justify-between pt-2 border-t"><span className="text-gray-500">Paid:</span> <span className="font-bold text-green-700">₹{order.amount_paid.toFixed(2)}</span></p>
+              <p className="flex justify-between pt-3 border-t-2 border-black"><span>Paid:</span> <span className="font-black text-green-600">₹{order.amount_paid.toFixed(2)}</span></p>
               
               {order.payment_status === 'pending' && (
-                <div className="mt-4 p-4 border border-orange-200 bg-orange-50 rounded-lg">
-                  <p className="font-medium text-orange-900 mb-3 text-center">PAYMENT PENDING</p>
-                  <p className="text-xs text-orange-800 text-center mb-4">
+                <div className="mt-4 p-5 border-2 border-black bg-neo-yellow rounded-xl shadow-[4px_4px_0_0_#000]">
+                  <p className="font-black text-black mb-2 text-center uppercase tracking-wider">PAYMENT PENDING</p>
+                  <p className="text-xs text-black font-bold text-center mb-5">
                     Verify transaction in your bank before confirming.
                   </p>
-                  <div className="flex gap-2">
+                  <div className="flex gap-3">
                     <form action={verifyPayment} className="flex-1">
-                      <button type="submit" className="w-full bg-green-600 text-white py-2 rounded text-sm font-medium hover:bg-green-700">Confirm Payment</button>
+                      <button type="submit" className="w-full bg-neo-green border-2 border-black text-black py-2 rounded-lg text-sm font-bold shadow-[2px_2px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all">Confirm Payment</button>
                     </form>
                     <form action={rejectPayment} className="flex-1">
-                      <button type="submit" className="w-full bg-red-600 text-white py-2 rounded text-sm font-medium hover:bg-red-700">Reject</button>
+                      <button type="submit" className="w-full bg-neo-pink border-2 border-black text-black py-2 rounded-lg text-sm font-bold shadow-[2px_2px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all">Reject</button>
                     </form>
                   </div>
                 </div>
               )}
 
               {order.amount_remaining > 0 && order.payment_status === 'partially_paid' && (
-                <div className="mt-4 bg-blue-50 p-4 rounded-lg border border-blue-200">
-                  <p className="font-medium text-blue-900 mb-3 text-center">PARTIALLY PAID</p>
-                  <div className="flex justify-between mb-2 text-sm">
-                    <span className="text-blue-800">Paid:</span>
-                    <span className="font-bold text-green-700">₹{order.amount_paid.toFixed(2)}</span>
+                <div className="mt-4 p-5 border-2 border-black bg-neo-blue rounded-xl shadow-[4px_4px_0_0_#000]">
+                  <p className="font-black text-black mb-4 text-center uppercase tracking-wider">PARTIALLY PAID</p>
+                  <div className="flex justify-between mb-2 text-sm font-bold">
+                    <span>Paid:</span>
+                    <span className="font-black text-green-600">₹{order.amount_paid.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between mb-4 text-sm">
-                    <span className="text-blue-800">Remaining:</span>
-                    <span className="font-bold text-red-700">₹{order.amount_remaining.toFixed(2)}</span>
+                  <div className="flex justify-between mb-5 text-sm font-bold">
+                    <span>Remaining:</span>
+                    <span className="font-black text-red-600">₹{order.amount_remaining.toFixed(2)}</span>
                   </div>
                   <form action={verifyRemainingPayment}>
-                    <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded text-sm font-medium hover:bg-blue-700">
+                    <button type="submit" className="w-full bg-white border-2 border-black text-black py-2.5 rounded-lg text-sm font-bold shadow-[2px_2px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all">
                       Confirm Remaining Payment
                     </button>
                   </form>
-                  <p className="text-[10px] text-blue-600 mt-2 text-center">Click only after manually collecting the balance.</p>
+                  <p className="text-[10px] text-black font-bold mt-3 text-center uppercase tracking-wider">Click only after manually collecting the balance.</p>
                 </div>
               )}
             </div>

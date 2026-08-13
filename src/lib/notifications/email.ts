@@ -3,7 +3,7 @@
 import { Resend } from 'resend'
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
-const fromEmail = process.env.EMAIL_FROM || 'orders@knotsandkeeps.com'
+const fromEmail = process.env.EMAIL_FROM || 'orders@threeknots.com'
 
 function generateInvoiceHtml(order: any) {
   const itemsHtml = order.order_items.map((item: any) => `
@@ -18,7 +18,7 @@ function generateInvoiceHtml(order: any) {
   return `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333; line-height: 1.6;">
       <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 20px; margin-bottom: 20px;">
-        <h1 style="margin: 0; font-size: 24px; letter-spacing: 2px; text-transform: uppercase;">Knots & Keeps</h1>
+        <h1 style="margin: 0; font-size: 24px; letter-spacing: 2px; text-transform: uppercase;">ThreeKnots</h1>
         <p style="margin: 5px 0 0 0; color: #666;">Premium handcrafted bracelets</p>
       </div>
 
@@ -94,7 +94,7 @@ function generateInvoiceHtml(order: any) {
       </div>
       
       <div style="margin-top: 40px; text-align: center; color: #888; font-size: 12px; border-top: 1px solid #eee; padding-top: 20px;">
-        <p>Thank you for shopping with Knots & Keeps!</p>
+        <p>Thank you for shopping with ThreeKnots!</p>
         <p>You can also download this invoice from your order tracking page.</p>
       </div>
     </div>
@@ -122,14 +122,14 @@ export async function sendOrderCreatedEmail(order: any) {
         
         <p>Please complete your payment using the QR code displayed on your order confirmation page. Your order will be confirmed immediately after we verify your payment.</p>
         
-        <p>Thank you,<br>Knots & Keeps Team</p>
+        <p>Thank you,<br>ThreeKnots Team</p>
       </div>
     `
 
     const data = await resend.emails.send({
       from: fromEmail,
       to: order.customer_email,
-      subject: `Knots & Keeps — Order Received ${order.order_number}`,
+      subject: `ThreeKnots — Order Received ${order.order_number}`,
       html: html,
     })
 
@@ -164,7 +164,7 @@ export async function sendOrderConfirmedEmail(order: any) {
     const data = await resend.emails.send({
       from: fromEmail,
       to: order.customer_email,
-      subject: `🎉 Knots & Keeps — Your Order is Confirmed ${order.order_number}`,
+      subject: `🎉 ThreeKnots — Your Order is Confirmed ${order.order_number}`,
       html: html,
     })
 
@@ -182,26 +182,26 @@ export async function sendOrderStatusUpdateEmail(order: any, status: string, not
   }
 
   try {
-    let subject = `Knots & Keeps — Update on Order ${order.order_number}`
+    let subject = `ThreeKnots — Update on Order ${order.order_number}`
     let message = ''
 
     if (status === 'processing') {
-      subject = `Knots & Keeps — Order ${order.order_number} is Processing`
+      subject = `ThreeKnots — Order ${order.order_number} is Processing`
       message = 'Good news! Your order is now being processed and prepared.'
     } else if (status === 'packed') {
-      subject = `Knots & Keeps — Order ${order.order_number} is Packed`
+      subject = `ThreeKnots — Order ${order.order_number} is Packed`
       message = 'Your order has been carefully packed and is waiting for courier pickup.'
     } else if (status === 'shipped') {
-      subject = `Knots & Keeps — Order ${order.order_number} is Shipped`
+      subject = `ThreeKnots — Order ${order.order_number} is Shipped`
       message = 'Your order is on its way! It has been shipped.'
       if (notes) {
         message += `<br><br><strong>Shipping Details:</strong><br>${notes}`
       }
     } else if (status === 'out_for_delivery') {
-      subject = `Knots & Keeps — Order ${order.order_number} is Out for Delivery`
+      subject = `ThreeKnots — Order ${order.order_number} is Out for Delivery`
       message = 'Your order is out for delivery today. Please keep your phone available.'
     } else if (status === 'delivered') {
-      subject = `Knots & Keeps — Order ${order.order_number} Delivered`
+      subject = `ThreeKnots — Order ${order.order_number} Delivered`
       message = 'Your order has been marked as delivered. We hope you love your new pieces!'
     } else {
       // Don't send emails for other statuses automatically
@@ -214,7 +214,7 @@ export async function sendOrderStatusUpdateEmail(order: any, status: string, not
         <p>Hi ${order.customer_name},</p>
         <p>${message}</p>
         <p>You can check your order status at any time on our website.</p>
-        <p>Thank you,<br>Knots & Keeps Team</p>
+        <p>Thank you,<br>ThreeKnots Team</p>
       </div>
     `
 

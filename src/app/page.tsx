@@ -12,7 +12,7 @@ function Navbar() {
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
             <Link href="/" className="text-xl font-bold tracking-widest text-black">
-              KNOTS & KEEPS
+              ThreeKnots
             </Link>
           </div>
           <nav className="hidden md:flex space-x-8">
@@ -41,7 +41,9 @@ function Footer() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-1">
-            <span className="text-lg font-bold tracking-widest text-black">KNOTS & KEEPS</span>
+            <div className="bg-neo-pink border-2 border-black p-4 mb-4 transform -rotate-2 hover:rotate-0 transition-transform w-fit">
+              <span className="text-lg font-bold tracking-widest text-black">ThreeKnots</span>
+            </div>
             <p className="mt-4 text-sm text-gray-500">Premium handcrafted bracelets inspired by your favorite themes. Made to keep.</p>
           </div>
           <div>
@@ -68,7 +70,7 @@ function Footer() {
           </div>
         </div>
         <div className="mt-12 border-t border-gray-200 pt-8 flex items-center justify-between">
-          <p className="text-sm text-gray-400">&copy; {new Date().getFullYear()} Knots and Keeps. All rights reserved.</p>
+          <p className="text-sm text-gray-400">&copy; {new Date().getFullYear()} ThreeKnots. All rights reserved.</p>
         </div>
       </div>
     </footer>

@@ -29,8 +29,8 @@ export default async function InvoicePage({ params }: { params: Promise<{ orderN
         {/* Header */}
         <div className="flex justify-between items-start border-b border-gray-200 pb-8 mb-8">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">KNOTS & KEEPS</h1>
-            <p className="text-sm text-gray-500 mt-1">Premium handcrafted bracelets</p>
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900">T&F</h1>
+            <p className="text-gray-500 mt-1">Invoice #{order.order_number}</p>
           </div>
           <div className="text-right">
             <h2 className="text-2xl font-bold text-gray-800 uppercase tracking-widest">INVOICE</h2>
@@ -134,9 +134,9 @@ export default async function InvoicePage({ params }: { params: Promise<{ orderN
         </div>
 
         {/* Footer */}
-        <div className="mt-16 pt-8 border-t border-gray-200 text-center text-sm text-gray-500">
-          <p>Thank you for shopping with Knots & Keeps!</p>
-          <p className="mt-1">If you have any questions about this invoice, please contact us.</p>
+        <div className="mt-16 text-center text-gray-500 text-sm">
+          <p>Thank you for shopping with T&F!</p>
+          <p className="mt-2">If you have any questions about this invoice, please contact us.</p>
         </div>
 
       </div>

@@ -17,84 +17,94 @@ export default async function AdminOrdersPage() {
 
   const getStatusColor = (status: string) => {
     switch(status) {
-      case 'pending_payment': return 'bg-yellow-100 text-yellow-800'
-      case 'payment_confirmed': return 'bg-blue-100 text-blue-800'
-      case 'processing': return 'bg-indigo-100 text-indigo-800'
-      case 'packed': return 'bg-purple-100 text-purple-800'
-      case 'shipped': return 'bg-blue-100 text-blue-800'
-      case 'out_for_delivery': return 'bg-orange-100 text-orange-800'
-      case 'delivered': return 'bg-green-100 text-green-800'
-      case 'cancelled': return 'bg-red-100 text-red-800'
-      default: return 'bg-gray-100 text-gray-800'
+      case 'pending_payment': return 'bg-neo-yellow text-black border-2 border-black shadow-[2px_2px_0_0_#000]'
+      case 'payment_confirmed': return 'bg-neo-blue text-black border-2 border-black shadow-[2px_2px_0_0_#000]'
+      case 'processing': return 'bg-neo-purple text-black border-2 border-black shadow-[2px_2px_0_0_#000]'
+      case 'packed': return 'bg-neo-pink text-black border-2 border-black shadow-[2px_2px_0_0_#000]'
+      case 'shipped': return 'bg-neo-blue text-black border-2 border-black shadow-[2px_2px_0_0_#000]'
+      case 'out_for_delivery': return 'bg-neo-yellow text-black border-2 border-black shadow-[2px_2px_0_0_#000]'
+      case 'delivered': return 'bg-neo-green text-black border-2 border-black shadow-[2px_2px_0_0_#000]'
+      case 'cancelled': return 'bg-red-500 text-white border-2 border-black shadow-[2px_2px_0_0_#000]'
+      default: return 'bg-white text-black border-2 border-black shadow-[2px_2px_0_0_#000]'
     }
   }
 
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">Orders</h1>
+        <h1 className="text-3xl font-black text-black tracking-tight">Orders</h1>
       </div>
 
-      <div className="bg-white shadow overflow-hidden sm:rounded-lg border border-gray-200">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {orders && orders.length > 0 ? (
-              orders.map((order) => (
-                <tr key={order.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-black">
-                    {order.order_number}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(order.created_at).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {order.customer_name}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
-                    ₹{order.total_amount.toFixed(2)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      order.payment_status === 'fully_paid' ? 'bg-green-100 text-green-800' :
-                      order.payment_status === 'partially_paid' ? 'bg-blue-100 text-blue-800' :
-                      order.payment_status === 'verification_required' ? 'bg-red-100 text-red-800 animate-pulse' :
-                      'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {order.payment_status.replace('_', ' ')}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(order.order_status)}`}>
-                      {order.order_status.replace(/_/g, ' ')}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <Link href={`/admin/orders/${order.order_number}`} className="text-gray-400 hover:text-black inline-block">
-                      <Eye className="w-5 h-5" />
-                    </Link>
+      <div className="bg-transparent md:bg-white md:shadow-[4px_4px_0_0_#000] overflow-hidden md:rounded-xl md:border-2 border-black">
+        <div className="overflow-x-auto custom-scrollbar">
+          <table className="min-w-full block md:table border-collapse">
+            <thead className="bg-neo-blue border-y-2 border-black hidden md:table-header-group">
+              <tr>
+                <th className="px-6 py-4 text-left text-xs font-black text-black uppercase tracking-wider">Order</th>
+                <th className="px-6 py-4 text-left text-xs font-black text-black uppercase tracking-wider">Date</th>
+                <th className="px-6 py-4 text-left text-xs font-black text-black uppercase tracking-wider">Customer</th>
+                <th className="px-6 py-4 text-left text-xs font-black text-black uppercase tracking-wider">Total</th>
+                <th className="px-6 py-4 text-left text-xs font-black text-black uppercase tracking-wider">Payment</th>
+                <th className="px-6 py-4 text-left text-xs font-black text-black uppercase tracking-wider">Status</th>
+                <th className="px-6 py-4 text-right text-xs font-black text-black uppercase tracking-wider">Action</th>
+              </tr>
+            </thead>
+            <tbody className="block md:table-row-group space-y-4 md:space-y-0 divide-y-0 md:divide-y-2 md:divide-black">
+              {orders && orders.length > 0 ? (
+                orders.map((order) => (
+                  <tr key={order.id} className="block md:table-row hover:bg-neo-bg transition-colors bg-white border-2 border-black md:border-0 rounded-xl md:rounded-none p-4 md:p-0 shadow-[4px_4px_0_0_#000] md:shadow-none">
+                    <td className="flex justify-between items-center md:table-cell px-0 md:px-6 py-2 md:py-4 whitespace-nowrap text-sm font-black text-black border-b-2 border-dashed border-gray-300 md:border-none pb-4 md:pb-4">
+                      <span className="md:hidden font-bold uppercase text-xs text-gray-500">Order</span>
+                      <span>{order.order_number}</span>
+                    </td>
+                    <td className="flex justify-between items-center md:table-cell px-0 md:px-6 py-2 md:py-4 whitespace-nowrap text-sm text-black font-bold mt-2 md:mt-0">
+                      <span className="md:hidden font-bold uppercase text-xs text-gray-500">Date</span>
+                      <span>{new Date(order.created_at).toLocaleDateString()}</span>
+                    </td>
+                    <td className="flex justify-between items-center md:table-cell px-0 md:px-6 py-2 md:py-4 whitespace-nowrap text-sm text-black font-bold">
+                      <span className="md:hidden font-bold uppercase text-xs text-gray-500">Customer</span>
+                      <span>{order.customer_name}</span>
+                    </td>
+                    <td className="flex justify-between items-center md:table-cell px-0 md:px-6 py-2 md:py-4 whitespace-nowrap text-sm text-black font-black">
+                      <span className="md:hidden font-bold uppercase text-xs text-gray-500">Total</span>
+                      <span>₹{order.total_amount.toFixed(2)}</span>
+                    </td>
+                    <td className="flex justify-between items-center md:table-cell px-0 md:px-6 py-2 md:py-4 whitespace-nowrap text-sm">
+                      <span className="md:hidden font-bold uppercase text-xs text-gray-500">Payment</span>
+                      <span className={`px-2 py-1 inline-flex text-xs leading-5 font-bold rounded-lg border-2 ${
+                        order.payment_status === 'fully_paid' ? 'bg-neo-green text-black border-black shadow-[2px_2px_0_0_#000]' :
+                        order.payment_status === 'partially_paid' ? 'bg-neo-blue text-black border-black shadow-[2px_2px_0_0_#000]' :
+                        order.payment_status === 'verification_required' ? 'bg-neo-pink text-black border-black shadow-[2px_2px_0_0_#000] animate-pulse' :
+                        'bg-neo-yellow text-black border-black shadow-[2px_2px_0_0_#000]'
+                      }`}>
+                        {order.payment_status.replace('_', ' ')}
+                      </span>
+                    </td>
+                    <td className="flex justify-between items-center md:table-cell px-0 md:px-6 py-2 md:py-4 whitespace-nowrap text-sm">
+                      <span className="md:hidden font-bold uppercase text-xs text-gray-500">Status</span>
+                      <span className={`px-2 py-1 inline-flex text-xs leading-5 font-bold rounded-lg ${getStatusColor(order.order_status)}`}>
+                        {order.order_status.replace(/_/g, ' ')}
+                      </span>
+                    </td>
+                    <td className="block md:table-cell px-0 md:px-6 py-4 whitespace-nowrap text-right text-sm font-medium border-t-2 border-dashed border-gray-300 md:border-none mt-2 md:mt-0">
+                      <Link href={`/admin/orders/${order.order_number}`} className="w-full md:w-auto flex justify-center items-center text-black bg-neo-yellow py-2 px-4 rounded-lg border-2 border-black shadow-[2px_2px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none hover:bg-yellow-400 transition-all font-bold text-xs uppercase">
+                        <Eye className="w-4 h-4 mr-2 md:hidden" />
+                        <span className="md:hidden">View Details</span>
+                        <Eye className="w-5 h-5 hidden md:block" />
+                      </Link>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr className="block md:table-row">
+                  <td colSpan={7} className="block md:table-cell px-6 py-12 text-center text-black text-sm font-black uppercase bg-white border-2 border-black rounded-xl shadow-[4px_4px_0_0_#000] md:border-none md:shadow-none md:bg-transparent">
+                    No orders found.
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={7} className="px-6 py-8 text-center text-gray-500 text-sm">
-                  No orders found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   )
