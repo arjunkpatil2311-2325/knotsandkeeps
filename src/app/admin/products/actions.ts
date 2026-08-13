@@ -75,7 +75,14 @@ export async function createProduct(formData: FormData) {
         .from('product-images')
         .upload(fileName, image)
 
-      if (!uploadError && uploadData) {
+      if (uploadError) {
+        console.error('Error uploading image:', uploadError)
+        // Clean up the product if image upload fails
+        await supabase.from('products').delete().eq('id', product.id)
+        redirect(`/admin/products/create?error=${encodeURIComponent('Image upload failed: ' + uploadError.message)}`)
+      }
+
+      if (uploadData) {
         const { data: { publicUrl } } = supabase.storage
           .from('product-images')
           .getPublicUrl(fileName)
@@ -103,7 +110,7 @@ export async function deleteProduct(formData: FormData) {
   
   if (error) {
     console.error('Error deleting product:', error)
-    throw new Error('Failed to delete product')
+    redirect(`/admin/products?error=${encodeURIComponent(error.message || 'Failed to delete product')}`)
   }
 
   revalidatePath('/admin/products')
