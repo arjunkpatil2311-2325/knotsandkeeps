@@ -23,6 +23,7 @@ export async function createProduct(formData: FormData) {
   
   const sku = formData.get('sku') as string || null
   const status = formData.get('status') as string || 'draft'
+  const category_id = formData.get('category_id') as string || null
   
   const is_featured = formData.get('is_featured') === 'on'
   const is_bestseller = formData.get('is_bestseller') === 'on'
@@ -46,6 +47,7 @@ export async function createProduct(formData: FormData) {
       stock_quantity,
       sku,
       status,
+      category_id,
       is_featured,
       is_bestseller,
       is_new_arrival,
@@ -137,6 +139,7 @@ export async function updateProduct(formData: FormData) {
   
   const sku = formData.get('sku') as string || null
   const status = formData.get('status') as string || 'draft'
+  const category_id = formData.get('category_id') as string || null
   
   const is_featured = formData.get('is_featured') === 'on'
   const is_bestseller = formData.get('is_bestseller') === 'on'
@@ -158,6 +161,7 @@ export async function updateProduct(formData: FormData) {
       stock_quantity,
       sku,
       status,
+      category_id,
       is_featured,
       is_bestseller,
       is_new_arrival,

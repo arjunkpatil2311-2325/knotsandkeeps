@@ -3,7 +3,10 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { LayoutWrapper } from '@/components/LayoutWrapper'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ 
+  subsets: ['latin'],
+  variable: '--font-inter',
+})
 
 export const metadata: Metadata = {
   title: 'ThreeKnots | Made to Keep',
@@ -17,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} min-h-screen flex flex-col bg-white text-black`}>
+      <body className={`${inter.variable} min-h-screen flex flex-col bg-background text-[#171717] font-sans antialiased`}>
         <LayoutWrapper>
           {children}
         </LayoutWrapper>

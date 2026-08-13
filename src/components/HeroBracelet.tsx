@@ -46,12 +46,12 @@ export function HeroBracelet({ product }: HeroBraceletProps) {
           y: { duration: 4, repeat: Infinity, ease: "easeInOut" },
           opacity: { duration: 0.8 }
         }}
-        className="relative z-10 w-[70%] h-[70%]"
+        className="relative z-10 w-[85%] h-[85%] rounded-[2rem] overflow-hidden bg-white/50 backdrop-blur-sm shadow-xl flex items-center justify-center p-4 border border-white/40"
       >
         <img
           src={product.product_images[0].url}
           alt={product.name}
-          className="w-full h-full object-contain drop-shadow-2xl"
+          className="w-full h-full object-contain mix-blend-multiply"
         />
       </motion.div>
 

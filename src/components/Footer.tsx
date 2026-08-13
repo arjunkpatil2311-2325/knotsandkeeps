@@ -11,48 +11,42 @@ export function Footer() {
   }
 
   return (
-    <footer className="mt-20 px-4 sm:px-8 lg:px-12 pb-8">
-      <div className="bg-brand-soft-pink/30 rounded-3xl p-8 sm:p-12 border border-white">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
-          <div className="md:col-span-1 flex flex-col gap-4">
-            <Link href="/" className="flex items-center gap-2 group w-fit">
-              <div className="flex gap-[2px]">
-                <div className="w-1.5 h-1.5 rounded-full bg-brand-accent group-hover:bg-black transition-colors" />
-                <div className="w-1.5 h-1.5 rounded-full bg-brand-accent group-hover:bg-black transition-colors" />
-                <div className="w-1.5 h-1.5 rounded-full bg-brand-accent group-hover:bg-black transition-colors" />
-              </div>
-              <span className="text-xl font-bold tracking-tight text-black group-hover:text-brand-accent transition-colors">
-                threeknots
-              </span>
-            </Link>
-            <p className="text-sm font-medium text-gray-600">Premium handcrafted bracelets. Made to keep.</p>
+    <footer className="bg-surface pt-16 md:pt-24 pb-32 md:pb-12 px-4 md:px-16 border-t-2 border-on-surface relative z-10">
+      <div className="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12">
+        <div className="md:col-span-4 mb-12 md:mb-0 flex flex-col gap-6">
+          <div className="flex items-center gap-3">
+            <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-on-surface shadow-md">
+              <img 
+                src="/logo.jpg" 
+                alt="ThreeKnots Logo" 
+                className="w-full h-full object-cover scale-110"
+              />
+            </div>
+            <div className="text-3xl font-headline-lg text-on-surface">ThreeKnots</div>
           </div>
-          <div>
-            <h3 className="text-xs font-bold text-black tracking-widest uppercase mb-6">Shop</h3>
-            <ul className="space-y-4">
-              <li><Link href="/shop" className="text-sm font-medium text-gray-600 hover:text-brand-accent transition-colors">All Products</Link></li>
-              <li><Link href="/collections" className="text-sm font-medium text-gray-600 hover:text-brand-accent transition-colors">Collections</Link></li>
-            </ul>
+          <p className="font-body-md text-on-surface-variant max-w-xs">Premium streetwear jewelry. Handcrafted to endure the journey.</p>
+        </div>
+        <div className="md:col-span-8 grid grid-cols-2 md:grid-cols-3 gap-8">
+          <div className="flex flex-col gap-4">
+            <h4 className="font-label-caps text-xs tracking-widest font-bold mb-4">SHOP</h4>
+            <Link href="/shop" className="font-body-md text-on-surface hover:text-secondary transition-colors">All Products</Link>
+            <Link href="/collections" className="font-body-md text-on-surface hover:text-secondary transition-colors">Collections</Link>
           </div>
-          <div>
-            <h3 className="text-xs font-bold text-black tracking-widest uppercase mb-6">Support</h3>
-            <ul className="space-y-4">
-              <li><Link href="/faq" className="text-sm font-medium text-gray-600 hover:text-brand-accent transition-colors">FAQ</Link></li>
-              <li><Link href="/shipping" className="text-sm font-medium text-gray-600 hover:text-brand-accent transition-colors">Shipping & Returns</Link></li>
-              <li><Link href="/contact" className="text-sm font-medium text-gray-600 hover:text-brand-accent transition-colors">Contact Us</Link></li>
-            </ul>
+          <div className="flex flex-col gap-4">
+            <h4 className="font-label-caps text-xs tracking-widest font-bold mb-4">SUPPORT</h4>
+            <Link href="/faq" className="font-label-caps text-xs text-on-surface-variant hover:text-secondary transition-colors">FAQ</Link>
+            <Link href="/shipping" className="font-label-caps text-xs text-on-surface-variant hover:text-secondary transition-colors">Shipping & Returns</Link>
+            <Link href="/contact" className="font-label-caps text-xs text-on-surface-variant hover:text-secondary transition-colors">Contact Us</Link>
           </div>
-          <div>
-            <h3 className="text-xs font-bold text-black tracking-widest uppercase mb-6">Legal</h3>
-            <ul className="space-y-4">
-              <li><Link href="/privacy" className="text-sm font-medium text-gray-600 hover:text-brand-accent transition-colors">Privacy Policy</Link></li>
-              <li><Link href="/terms" className="text-sm font-medium text-gray-600 hover:text-brand-accent transition-colors">Terms of Service</Link></li>
-            </ul>
+          <div className="flex flex-col gap-4">
+            <h4 className="font-label-caps text-xs tracking-widest font-bold mb-4">LEGAL</h4>
+            <Link href="/privacy" className="font-label-caps text-xs text-on-surface-variant hover:text-secondary transition-colors">Privacy Policy</Link>
+            <Link href="/terms" className="font-label-caps text-xs text-on-surface-variant hover:text-secondary transition-colors">Terms of Service</Link>
           </div>
         </div>
-        <div className="mt-16 pt-8 border-t border-brand-rose/20 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm font-medium text-gray-500">&copy; {new Date().getFullYear()} ThreeKnots. All rights reserved.</p>
-        </div>
+      </div>
+      <div className="max-w-[1440px] mx-auto mt-24 pt-8 border-t-2 border-on-surface flex justify-between items-center">
+        <span className="font-label-caps text-xs text-on-surface-variant">&copy; {new Date().getFullYear()} ThreeKnots. Made to keep.</span>
       </div>
     </footer>
   )

@@ -1,13 +1,19 @@
 import { createClient } from '@/utils/supabase/server'
 import { createCategory, deleteCategory } from './actions'
-import { Trash2 } from 'lucide-react'
+import { Trash2, Edit2 } from 'lucide-react'
+import Link from 'next/link'
 
-export default async function AdminCategoriesPage() {
+export default async function AdminCategoriesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string, success?: string }>
+}) {
   const supabase = await createClient()
+  const { error: pageError, success } = await searchParams
 
   const { data: categories, error } = await supabase
     .from('categories')
-    .select('*')
+    .select('*, products:products(count)')
     .order('created_at', { ascending: false })
 
   if (error) {
@@ -22,6 +28,18 @@ export default async function AdminCategoriesPage() {
           <p className="mt-1 text-sm text-black font-bold">Manage product categories.</p>
         </div>
       </div>
+
+      {pageError && (
+        <div className="mb-6 bg-red-100 border-2 border-black text-black px-4 py-3 rounded-lg relative font-bold" role="alert">
+          <span className="block sm:inline">{pageError}</span>
+        </div>
+      )}
+
+      {success && (
+        <div className="mb-6 bg-green-100 border-2 border-black text-black px-4 py-3 rounded-lg relative font-bold" role="alert">
+          <span className="block sm:inline">{success}</span>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
@@ -61,6 +79,7 @@ export default async function AdminCategoriesPage() {
                   <tr>
                     <th className="px-6 py-4 text-left text-xs font-black text-black uppercase tracking-wider">Name</th>
                     <th className="px-6 py-4 text-left text-xs font-black text-black uppercase tracking-wider">Slug</th>
+                    <th className="px-6 py-4 text-left text-xs font-black text-black uppercase tracking-wider">Products</th>
                     <th className="px-6 py-4 text-right text-xs font-black text-black uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
@@ -75,25 +94,36 @@ export default async function AdminCategoriesPage() {
                             {category.description && <p className="text-xs text-gray-600 font-bold hidden md:block">{category.description}</p>}
                           </div>
                         </td>
-                        <td className="flex justify-between items-center md:table-cell px-0 md:px-6 py-2 md:py-4 whitespace-nowrap text-sm text-black font-bold">
+                        <td className="flex justify-between items-center md:table-cell px-0 md:px-6 py-2 md:py-4 whitespace-nowrap text-sm text-black font-bold border-b-2 border-dashed border-gray-300 md:border-none">
                           <span className="md:hidden font-bold uppercase text-xs text-gray-500">Slug</span>
                           <span>{category.slug}</span>
                         </td>
+                        <td className="flex justify-between items-center md:table-cell px-0 md:px-6 py-2 md:py-4 whitespace-nowrap text-sm text-black font-bold">
+                          <span className="md:hidden font-bold uppercase text-xs text-gray-500">Products</span>
+                          <span>{category.products[0]?.count || 0}</span>
+                        </td>
                         <td className="block md:table-cell px-0 md:px-6 py-4 whitespace-nowrap text-right text-sm font-medium border-t-2 border-dashed border-gray-300 md:border-none mt-2 md:mt-0">
-                          <form action={deleteCategory} className="w-full md:w-auto">
-                            <input type="hidden" name="id" value={category.id} />
-                            <button type="submit" className="w-full md:w-auto flex justify-center items-center text-white bg-red-500 py-2 px-3 rounded-lg border-2 border-black shadow-[2px_2px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all hover:bg-red-600 font-bold text-xs uppercase" onClick={(e) => { if(!confirm('Are you sure you want to delete this category? Products in this category will have their category removed.')) e.preventDefault(); }}>
-                              <Trash2 className="w-4 h-4 md:hidden mr-2" />
-                              <span className="md:hidden">Delete</span>
-                              <Trash2 className="w-4 h-4 hidden md:block" />
-                            </button>
-                          </form>
+                          <div className="flex flex-col md:flex-row justify-end items-stretch gap-2 w-full md:w-auto">
+                            <Link href={`/admin/categories/edit/${category.id}`} className="w-full md:w-auto flex justify-center items-center text-black bg-neo-blue py-2 px-3 rounded-lg border-2 border-black shadow-[2px_2px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all hover:bg-blue-400 font-bold text-xs uppercase">
+                              <Edit2 className="w-4 h-4 md:hidden mr-2" />
+                              <span className="md:hidden">Edit</span>
+                              <Edit2 className="w-4 h-4 hidden md:block" />
+                            </Link>
+                            <form action={deleteCategory} className="w-full md:w-auto">
+                              <input type="hidden" name="id" value={category.id} />
+                              <button type="submit" className="w-full md:w-auto flex justify-center items-center text-white bg-red-500 py-2 px-3 rounded-lg border-2 border-black shadow-[2px_2px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all hover:bg-red-600 font-bold text-xs uppercase" onClick={(e) => { if(!confirm('Are you sure you want to delete this category? Products in this category will have their category removed.')) e.preventDefault(); }}>
+                                <Trash2 className="w-4 h-4 md:hidden mr-2" />
+                                <span className="md:hidden">Delete</span>
+                                <Trash2 className="w-4 h-4 hidden md:block" />
+                              </button>
+                            </form>
+                          </div>
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr className="block md:table-row">
-                      <td colSpan={3} className="block md:table-cell px-6 py-12 text-center text-black text-sm font-black uppercase bg-white border-2 border-black rounded-xl shadow-[4px_4px_0_0_#000] md:border-none md:shadow-none md:bg-transparent">
+                      <td colSpan={4} className="block md:table-cell px-6 py-12 text-center text-black text-sm font-black uppercase bg-white border-2 border-black rounded-xl shadow-[4px_4px_0_0_#000] md:border-none md:shadow-none md:bg-transparent">
                         No categories found.
                       </td>
                     </tr>
@@ -105,6 +135,22 @@ export default async function AdminCategoriesPage() {
         </div>
 
       </div>
+
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+            document.addEventListener('DOMContentLoaded', () => {
+              const nameInput = document.getElementById('name');
+              const slugInput = document.getElementById('slug');
+              if(nameInput && slugInput) {
+                nameInput.addEventListener('input', (e) => {
+                  slugInput.value = e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+                });
+              }
+            });
+          `
+        }}
+      />
     </div>
   )
 }

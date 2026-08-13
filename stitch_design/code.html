@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ThreeKnots | Made to keep.</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&amp;family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&amp;family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#f4c2c2",
+                        "on-surface": "#1b1b1b",
+                        "surface-variant": "#e2e2e2",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed": "#3e001f",
+                        "surface": "#f9f9f9",
+                        "tertiary-fixed-dim": "#c8c6c3",
+                        "surface-tint": "#7b5455",
+                        "on-tertiary-fixed-variant": "#474744",
+                        "error-container": "#ffdad6",
+                        "secondary-container": "#e10080",
+                        "on-tertiary-container": "#575855",
+                        "on-error": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "inverse-on-surface": "#f1f1f1",
+                        "inverse-primary": "#ecbaba",
+                        "outline": "#827473",
+                        "outline-variant": "#d4c2c2",
+                        "on-surface-variant": "#504444",
+                        "on-background": "#1b1b1b",
+                        "on-secondary-container": "#fffbff",
+                        "surface-container-high": "#e8e8e8",
+                        "on-primary-fixed-variant": "#613d3e",
+                        "background": "#fdfbf7",
+                        "on-tertiary": "#ffffff",
+                        "surface-bright": "#f9f9f9",
+                        "tertiary-fixed": "#e4e2de",
+                        "error": "#ba1a1a",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container": "#eeeeee",
+                        "primary-fixed-dim": "#ecbaba",
+                        "on-secondary-fixed-variant": "#8d004e",
+                        "on-primary-container": "#734e4e",
+                        "surface-container-highest": "#e2e2e2",
+                        "primary-fixed": "#ffdad9",
+                        "on-tertiary-fixed": "#1b1c1a",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed": "#2f1314",
+                        "secondary-fixed": "#ffd9e3",
+                        "primary": "#7b5455",
+                        "tertiary-container": "#cfceca",
+                        "inverse-surface": "#303030",
+                        "surface-dim": "#dadada",
+                        "secondary-fixed-dim": "#ffb0ca",
+                        "tertiary": "#5e5e5c",
+                        "surface-container-low": "#f3f3f3",
+                        "secondary": "#ff1493"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0px",
+                        "lg": "0px",
+                        "xl": "0px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "bento-gap": "16px",
+                        "margin-desktop": "64px",
+                        "unit": "4px",
+                        "gutter": "24px",
+                        "margin-mobile": "20px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Bodoni Moda"],
+                        "headline-lg": ["Bodoni Moda"],
+                        "label-caps": ["Space Mono"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "headline-md": ["Bodoni Moda"],
+                        "body-md": ["Hanken Grotesk"],
+                        "display-lg": ["Bodoni Moda"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["36px", { "lineHeight": "42px", "fontWeight": "800" }],
+                        "headline-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.01em", "fontWeight": "800" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "letterSpacing": "0.05em", "fontWeight": "400" }],
+                        "headline-md": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0.03em", "fontWeight": "400" }],
+                        "display-lg": ["84px", { "lineHeight": "90px", "letterSpacing": "-0.02em", "fontWeight": "900" }]
+                    },
+                    "boxShadow": {
+                        "hard": "4px 4px 0px #1b1b1b",
+                        "hard-hover": "6px 6px 0px #1b1b1b",
+                        "halo": "0 0 40px -10px #f4c2c2"
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .neo-brutalist-border { border: 2px solid #1b1b1b; }
+        .marquee { animation: marquee 25s linear infinite; }
+        @keyframes marquee { 0% { transform: translateX(0%); } 100% { transform: translateX(-100%); } }
+        .sparkle { color: #ff1493; }
+        .text-outline { -webkit-text-stroke: 1px #1b1b1b; color: transparent; }
+        
+        /* Staggered load animation */
+        .slide-up {
+            opacity: 0;
+            transform: translateY(40px) rotate(-2deg);
+            animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .slide-up:nth-child(2) { animation-delay: 0.1s; transform: translateY(50px) rotate(3deg); }
+        .slide-up:nth-child(3) { animation-delay: 0.2s; transform: translateY(60px) rotate(-1deg); }
+        
+        @keyframes slideUpFade {
+            to { opacity: 1; transform: translateY(0) rotate(0); }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen relative overflow-x-hidden">
+<!-- Ambient Shader Background -->
+<div class="fixed inset-0 z-[-1] opacity-20 pointer-events-none mix-blend-multiply">
+
+</div>
+<!-- Top Navigation -->
+<header class="fixed top-0 w-full bg-surface border-b-2 border-on-surface z-50 transition-all duration-300 h-20 flex items-center justify-between px-margin-desktop shadow-sm">
+<div class="text-headline-md font-headline-md font-black tracking-tighter text-on-surface">ThreeKnots</div>
+<nav class="hidden md:flex gap-8">
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-secondary transition-colors duration-300" href="#">Home</a>
+<a class="font-label-caps text-label-caps text-secondary font-bold border-b-2 border-secondary pb-1" href="#">Shop</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-secondary transition-colors duration-300" href="#">Custom</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-secondary transition-colors duration-300" href="#">About</a>
+</nav>
+<div class="flex items-center gap-6">
+<button class="hover:text-secondary transition-colors duration-300 group">
+<span class="material-symbols-outlined text-[24px] group-hover:scale-110 transition-transform">search</span>
+</button>
+<button class="hover:text-secondary transition-colors duration-300 group relative">
+<span class="material-symbols-outlined text-[24px] group-hover:scale-110 transition-transform" data-weight="fill">shopping_bag</span>
+<span class="absolute -top-2 -right-2 bg-secondary text-on-primary w-5 h-5 flex items-center justify-center rounded-full font-label-caps text-[10px]">2</span>
+</button>
+</div>
+</header>
+<main class="pt-28 pb-32 max-w-[1440px] mx-auto px-margin-mobile md:px-margin-desktop">
+<!-- Hero Section -->
+<section class="relative min-h-[85vh] flex flex-col justify-center items-center py-20 text-center mb-32">
+<div class="absolute inset-0 z-0 flex justify-center items-center pointer-events-none opacity-40">
+<div class="w-[600px] h-[600px] bg-primary-container rounded-full blur-[80px]"></div>
+</div>
+<div class="z-10 w-full max-w-4xl mx-auto flex flex-col items-center">
+<div class="flex gap-4 mb-8">
+<span class="bg-surface px-4 py-2 neo-brutalist-border font-label-caps text-label-caps shadow-hard bg-white">HANDCRAFTED</span>
+<span class="bg-primary-container px-4 py-2 neo-brutalist-border font-label-caps text-label-caps shadow-hard">ANIME INSPIRED</span>
+</div>
+<h1 class="font-display-lg text-display-lg font-black uppercase leading-[0.9] mb-12 tracking-tighter text-on-surface">
+                    Made to<br/>
+<span class="text-outline">Keep.</span>
+</h1>
+<div class="relative w-full h-[300px] md:h-[400px] mb-12">
+<img class="absolute inset-0 w-full h-full object-contain slide-up drop-shadow-[0_20px_40px_rgba(244,194,194,0.6)]" data-alt="High fashion editorial photography of multiple stacked, colorful, braided friendship bracelets and anime-inspired rope jewelry with silver charms, arranged dynamically in mid-air against a soft cream background. Bright lighting, hard shadows, neo-brutalist style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOiLmyid9UJMRRJXGmNmfRlSO4L9clmD8qBeU46b2kxlRIOaRTAZurO_-LqMAM5-_soslSVYlvyi6_ciCCbBKVzAQfQTL_uA8CjSW_UbuEzliup-jtLN70w6sXZcbuEj5KE0nX-fSz2z-AWF8ARh2WmpMpw6RYS6XJ2XUdyeHjUIil5r3lUMz8jPOhTi0T-0hXUz6RQjAo-8Te6NL6ihbacvYpxZkbaTyQ0kaDvhAlX4WiL3ZsTXjUvQ"/>
+</div>
+<div class="flex gap-6 z-20">
+<button class="bg-secondary text-on-surface neo-brutalist-border font-label-caps text-label-caps px-8 py-4 shadow-hard hover:shadow-hard-hover hover:-translate-y-1 transition-all">
+                        SHOP BRACELETS →
+                    </button>
+<button class="bg-primary-container text-on-surface neo-brutalist-border font-label-caps text-label-caps px-8 py-4 hover:-translate-y-1 transition-all">
+                        EXPLORE COLLECTIONS
+                    </button>
+</div>
+</div>
+</section>
+<!-- Bento Grid: Featured -->
+<section class="mb-32">
+<div class="flex justify-between items-end mb-12">
+<h2 class="font-headline-lg text-headline-lg max-w-lg">THE ONES YOU'LL KEEP.<span class="sparkle">✦</span></h2>
+<a class="font-label-caps text-label-caps underline hover:text-secondary mb-2" href="#">VIEW ALL STYLES</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-bento-gap">
+<!-- Large Card -->
+<div class="md:col-span-8 bg-surface neo-brutalist-border relative group overflow-hidden flex flex-col md:flex-row h-full">
+<div class="w-full md:w-1/2 p-8 flex flex-col justify-between z-10 bg-surface">
+<div>
+<span class="bg-white px-3 py-1 neo-brutalist-border font-label-caps text-[10px] mb-4 inline-block">BEST SELLER</span>
+<h3 class="font-headline-md text-headline-md mb-2">Sukuna's Vow Knot</h3>
+<p class="font-body-md text-on-surface-variant mb-6">A heavy braided rope in deep crimson and black, finished with a matte silver charm.</p>
+</div>
+<div class="flex justify-between items-center mt-auto">
+<span class="font-label-caps text-label-caps">$45.00</span>
+<button class="w-12 h-12 bg-secondary neo-brutalist-border flex items-center justify-center hover:bg-primary-container transition-colors shadow-hard">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+<div class="w-full md:w-1/2 h-64 md:h-auto bg-surface-variant relative overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="Close up product shot of a thick braided red and black rope bracelet with a heavy matte silver charm on a stark white textured background. Bright harsh lighting creating sharp dark shadows. Neo-brutalist aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTT67MH997BptYuJv7lnzzQHezLRRN1dk55IXmnmNQhV1E3aLDUCLHyBIhp0UvbOr4NPVCkE2Jg9H0Bav8XHqN7IGsqj2nF4OtA7pCxP0wN7OQcgWIsSw3XiOWeahO0BHsHEz73SK9IHz8DCw_mxYU0aHEqslJuZ_I-2WK3sgmd4cgq4iXi1KIgTtSOHpFnmNA86EFmcNw8D0FTyQgn-Zt9NG-liHsZpu9gDMb9sTsC4enLTUhrSpRdw"/>
+</div>
+</div>
+<!-- Small Card 1 -->
+<div class="md:col-span-4 bg-primary-container neo-brutalist-border p-6 relative group flex flex-col shadow-hard">
+<div class="h-48 w-full bg-white neo-brutalist-border mb-6 relative overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Minimalist product photography of a delicate pink and cream woven friendship bracelet with a small heart charm lying on a clean white surface with sharp shadows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSXcZJ0-vg-GypLwK1VYBl4V-CtyKFIuShDZYu-834IwndPhtYEI3wvvlC7nh9WblIIETaLPFQlqiDmCXP-V-MrnntDZbosc5BFRWhan3C5XtklE4H9cDnunVhBxLWJhIRwCTqx5s2jVMoggoEjfWpd3lSm1MtkTV0lE95Rq2YBOpXipyKyZgNeqj6SF3iy0apyPdn8pJ9LG3K_nQGPb0ort0cIJNtrlgGyupuhysn0KB4C22DcZHEpQ"/>
+</div>
+<h3 class="font-headline-md text-xl font-bold mb-1">Sakura Thread</h3>
+<p class="font-body-md text-sm mb-4">Delicate, blush, eternal.</p>
+<div class="flex justify-between items-center mt-auto">
+<span class="font-label-caps text-label-caps">$28.00</span>
+<button class="bg-white px-4 py-2 neo-brutalist-border font-label-caps text-[10px] hover:bg-secondary hover:text-white transition-colors">ADD</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Brand Story -->
+<section class="mb-32 bg-surface neo-brutalist-border p-12 md:p-24 relative overflow-hidden">
+<div class="absolute -right-20 -top-20 w-96 h-96 bg-primary-container rounded-full blur-[100px] opacity-60 z-0"></div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-16 relative z-10 items-center">
+<div>
+<h2 class="font-headline-lg text-headline-lg mb-8 leading-tight">SOME THINGS ARE MEANT TO STAY.<span class="sparkle">✧</span></h2>
+<p class="font-body-lg text-body-lg mb-8 max-w-md">We reject the disposable. Every knot is tied with intention, combining high-end editorial aesthetics with the raw energy of streetwear culture.</p>
+<a class="inline-flex items-center gap-2 font-label-caps text-label-caps border-b-2 border-on-surface pb-1 hover:text-secondary hover:border-secondary transition-colors" href="#">
+                         READ OUR STORY <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+<div class="relative">
+<div class="w-full aspect-[4/5] bg-surface-variant neo-brutalist-border shadow-[12px_12px_0px_#1b1b1b] overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Artistic high fashion portrait crop of hands wearing multiple textured woven bracelets in pinks and blacks, holding a delicate white flower. Soft cream background with harsh, dramatic flash lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyQPcERXhlBjDIGbLqvqX3QLIF_ak1k6Kgqkt9htwpBAbiAGnkiuHVoPPXpJUi5mp8mKDAJDW9Mv7frmypUXLH2CuCI-tq5k6pZ6JoY6Vpy0imytdY1-T7fx9hJy1Gkqnr6k4JfrqtmjBWZ2TNyau2sEILjr7cKlHf5pSN9OzqgqmxLgRAa0zYHRdd-mFaNCBIDHLRxeOt0b7KsbqYaxfWaz-kO-K6i7NErw-dmN-vGa-Mt7LCxjDk6A"/>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Marquee -->
+<div class="w-full bg-on-surface text-surface py-4 overflow-hidden border-y-2 border-on-surface border-t-white relative z-10 flex">
+<div class="whitespace-nowrap marquee flex gap-8 font-display-lg text-4xl uppercase tracking-widest text-outline -webkit-text-stroke-white opacity-80">
+<span>THREEKNOTS ♡ HANDCRAFTED ♡ MADE TO KEEP ♡ ANIME INSPIRED ♡ </span>
+<span>THREEKNOTS ♡ HANDCRAFTED ♡ MADE TO KEEP ♡ ANIME INSPIRED ♡ </span>
+<span>THREEKNOTS ♡ HANDCRAFTED ♡ MADE TO KEEP ♡ ANIME INSPIRED ♡ </span>
+</div>
+</div>
+<!-- Footer -->
+<footer class="bg-surface pt-24 pb-12 px-margin-desktop border-t-2 border-on-surface mt-16 relative z-10">
+<div class="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<div class="md:col-span-4 mb-12 md:mb-0">
+<div class="text-headline-lg font-headline-lg text-on-surface mb-8">ThreeKnots</div>
+<p class="font-body-md text-on-surface-variant max-w-xs mb-8">Premium streetwear jewelry. Handcrafted to endure the journey.</p>
+<div class="flex gap-4">
+<span class="material-symbols-outlined p-2 border-2 border-on-surface hover:bg-primary-container cursor-pointer transition-colors">eco</span>
+<span class="material-symbols-outlined p-2 border-2 border-on-surface hover:bg-primary-container cursor-pointer transition-colors">favorite</span>
+</div>
+</div>
+<div class="md:col-span-8 grid grid-cols-2 md:grid-cols-3 gap-8">
+<div class="flex flex-col gap-4">
+<h4 class="font-label-caps text-label-caps font-bold mb-4">SHOP</h4>
+<a class="font-body-md text-on-surface hover:text-secondary transition-colors" href="#">All Bracelets</a>
+<a class="font-body-md text-on-surface hover:text-secondary transition-colors" href="#">Anime Collection</a>
+<a class="font-body-md text-on-surface hover:text-secondary transition-colors" href="#">Couples</a>
+<a class="font-body-md text-on-surface hover:text-secondary transition-colors" href="#">Custom Text</a>
+</div>
+<div class="flex flex-col gap-4">
+<h4 class="font-label-caps text-label-caps font-bold mb-4">LEGAL</h4>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-secondary transition-colors" href="#">Privacy Policy</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-secondary transition-colors" href="#">Terms of Service</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-secondary transition-colors" href="#">Shipping &amp; Returns</a>
+</div>
+</div>
+</div>
+<div class="max-w-[1440px] mx-auto mt-24 pt-8 border-t-2 border-on-surface flex justify-between items-center">
+<span class="font-label-caps text-label-caps text-on-surface-variant">© 2024 ThreeKnots. Made to keep.</span>
+</div>
+</footer>
+</body></html>

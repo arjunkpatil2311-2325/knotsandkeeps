@@ -1,15 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #fdfbf7;
   --foreground: #171717;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter), sans-serif;
   
   /* Admin Panel Neo-Brutalism Colors (Do Not Break) */
   --color-neo-bg: #FDFBF7;
@@ -21,29 +20,45 @@
   --color-neo-purple: #A78BFA;
   --color-neo-blue: #60A5FA;
 
-  /* ThreeKnots Customer Theme Colors */
-  --color-brand-soft-pink: #ffd1d1;
-  --color-brand-blush: #ffe4e1;
-  --color-brand-rose: #f4a4a4;
-  --color-brand-dusty: #d8a4a4;
-  --color-brand-cream: #fff5e1;
-  --color-brand-ivory: #fffff0;
-  --color-brand-accent: #e07a7a;
-  --color-brand-bg: #fdfaf6;
+  /* ThreeKnots Customer Accent Colors */
+  --color-primary-container: #ffeef1;
+  --color-on-surface: #171717;
+  --color-on-surface-variant: #666666;
+  --color-surface-variant: #e8e8e8;
+  --color-on-primary: #ffffff;
+  --color-surface: #ffffff;
+  --color-secondary-container: #ff1493;
+  --color-on-error: #ffffff;
+  --color-secondary: #f72585;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #fdfbf7; /* Keep light background theme */
+    --foreground: #171717;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
   overflow-x: hidden;
+}
+
+/* Custom CSS Classes from Design */
+.marquee { animation: marquee 30s linear infinite; }
+@keyframes marquee { 0% { transform: translateX(0%); } 100% { transform: translateX(-100%); } }
+
+/* Staggered load animation */
+.slide-up {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideUpFade {
+    to { opacity: 1; transform: translateY(0); }
 }
 
 /* Custom scrollbar for webkit */
@@ -54,9 +69,9 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #f4a4a4;
+  background: #f4c2c2;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #e07a7a;
+  background: var(--color-secondary);
 }

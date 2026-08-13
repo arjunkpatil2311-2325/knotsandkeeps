@@ -1,16 +1,40 @@
 import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
-import { ChevronDown, Maximize2, ShoppingBag } from 'lucide-react'
+import { ChevronDown, Maximize2, ShoppingBag, LayoutGrid } from 'lucide-react'
 
-export default async function ShopPage() {
+export default async function ShopPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string }>
+}) {
   const supabase = await createClient()
+  const { category: categorySlug } = await searchParams
 
-  // In a real app we'd parse searchParams for filters/sorting
-  const { data: products } = await supabase
+  // Fetch all categories for the filter
+  const { data: categories } = await supabase
+    .from('categories')
+    .select('*')
+    .order('name')
+
+  // Build the products query
+  let productsQuery = supabase
     .from('products')
-    .select('*, product_images(url), category:category_id(name)')
+    .select('*, product_images(url), category:category_id(name, slug)')
     .eq('status', 'published')
     .order('created_at', { ascending: false })
+
+  if (categorySlug) {
+    // Find the category ID from the slug
+    const selectedCategory = categories?.find(c => c.slug === categorySlug)
+    if (selectedCategory) {
+      productsQuery = productsQuery.eq('category_id', selectedCategory.id)
+    }
+  }
+
+  const { data: products } = await productsQuery
+  
+  const currentCategory = categories?.find(c => c.slug === categorySlug)
+  const title = currentCategory ? currentCategory.name : 'Shop'
 
   return (
     <div className="w-full pb-32">
@@ -24,12 +48,12 @@ export default async function ShopPage() {
 
           {/* Breadcrumb Left */}
           <div className="relative z-10 text-sm font-bold text-[#A53F58] mb-8 md:mb-0 w-full md:w-1/3 text-left">
-             Home / <span className="text-[#6C2537]">Product</span>
+             Home / <span className="text-[#6C2537]">{title}</span>
           </div>
 
           {/* Center Title */}
           <div className="relative z-10 w-full md:w-1/3 flex justify-center mb-8 md:mb-0">
-             <h1 className="text-5xl md:text-6xl font-black text-black tracking-tight">Shop</h1>
+             <h1 className="text-5xl md:text-6xl font-black text-black tracking-tight text-center">{title}</h1>
           </div>
 
           {/* Right Controls */}
@@ -42,8 +66,30 @@ export default async function ShopPage() {
           </div>
        </div>
 
+       {/* Category Filters */}
+       <div className="relative z-30 px-4 md:px-8 -mt-40 mb-12 flex justify-center">
+         <div className="bg-white p-2 rounded-full shadow-lg border-2 border-black flex items-center gap-2 overflow-x-auto max-w-full custom-scrollbar">
+           <Link 
+             href="/shop" 
+             className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm transition-all whitespace-nowrap ${!categorySlug ? 'bg-neo-yellow text-black shadow-[2px_2px_0_0_#000] border-2 border-black' : 'text-gray-600 hover:text-black hover:bg-gray-100'}`}
+           >
+             <LayoutGrid className="w-4 h-4" />
+             All Products
+           </Link>
+           {categories?.map(category => (
+             <Link 
+               key={category.id} 
+               href={`/shop?category=${category.slug}`}
+               className={`px-5 py-2.5 rounded-full font-bold text-sm transition-all whitespace-nowrap ${categorySlug === category.slug ? 'bg-neo-blue text-black shadow-[2px_2px_0_0_#000] border-2 border-black' : 'text-gray-600 hover:text-black hover:bg-gray-100'}`}
+             >
+               {category.name}
+             </Link>
+           ))}
+         </div>
+       </div>
+
        {/* Product Grid - overlaps the header */}
-       <div className="-mt-32 relative z-20 px-4 md:px-8">
+       <div className="relative z-20 px-4 md:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10 max-w-[1400px] mx-auto">
              {products?.map((product, i) => {
                 // Alternate pill colors for a playful look similar to the reference
@@ -84,7 +130,7 @@ export default async function ShopPage() {
 
                      {/* Content below image */}
                      <div className="text-center w-full z-20 px-4">
-                        <p className="text-[#645A8A] font-bold mb-1 truncate text-[15px]">{product.category?.name || 'Premium Bracelet'}</p>
+                        <p className="text-[#645A8A] font-bold mb-1 truncate text-[15px]">{product.category?.name || 'Uncategorized'}</p>
                         <p className="text-gray-400 font-bold text-[15px]">₹{product.price}</p>
                      </div>
                   </Link>
@@ -94,7 +140,10 @@ export default async function ShopPage() {
 
           {(!products || products.length === 0) && (
             <div className="py-20 text-center">
-              <p className="text-xl font-bold text-gray-900">No products found</p>
+              <p className="text-xl font-bold text-gray-900">No products found in this category.</p>
+              <Link href="/shop" className="inline-block mt-6 px-6 py-3 bg-black text-white font-bold rounded-full">
+                View All Products
+              </Link>
             </div>
           )}
        </div>

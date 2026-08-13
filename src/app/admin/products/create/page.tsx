@@ -1,12 +1,21 @@
 import { createProduct } from '../actions'
 import Link from 'next/link'
 
+import { createClient } from '@/utils/supabase/server'
+
 export default async function CreateProductPage({
   searchParams,
 }: {
   searchParams: Promise<{ error?: string }>
 }) {
   const { error } = await searchParams
+  const supabase = await createClient()
+
+  // Fetch real categories from Supabase
+  const { data: categories } = await supabase
+    .from('categories')
+    .select('id, name')
+    .order('name')
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -117,6 +126,20 @@ export default async function CreateProductPage({
                     <option value="draft">Draft</option>
                     <option value="published">Published</option>
                     <option value="archived">Archived</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t-2 sm:border-black sm:pt-5">
+                <label htmlFor="category_id" className="block text-sm font-black text-black uppercase tracking-wider sm:mt-px sm:pt-2">Category</label>
+                <div className="mt-1 sm:mt-0 sm:col-span-2">
+                  <select id="category_id" name="category_id" className="max-w-lg block w-full bg-white border-2 border-black rounded-lg shadow-[inset_2px_2px_0px_0px_rgba(0,0,0,0.05)] p-2 font-bold text-black focus:ring-0 focus:border-black sm:max-w-xs">
+                    <option value="">No Category</option>
+                    {categories?.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
