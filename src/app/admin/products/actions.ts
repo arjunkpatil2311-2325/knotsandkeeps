@@ -57,7 +57,7 @@ export async function createProduct(formData: FormData) {
 
   if (productError) {
     console.error('Error creating product:', productError)
-    throw new Error('Failed to create product: ' + productError.message)
+    redirect(`/admin/products/create?error=${encodeURIComponent(productError.message || 'Unknown error')}`)
   }
 
   // 2. Handle image uploads
