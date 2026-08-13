@@ -103,54 +103,19 @@ export default async function Home() {
             </p>
           </div>
 
-          {/* Right Column: Hero Product Collage */}
+          {/* Right Column: Hero Product Card */}
           <div className="lg:col-span-7 relative flex items-center justify-center min-h-[480px] w-full">
             {/* Soft shadow / glow canvas */}
             <div className="absolute w-[280px] md:w-[420px] aspect-square bg-[#ffeef1] rounded-full filter blur-[80px] opacity-40"></div>
             
             {/* Main Center Image */}
-            <div className="relative w-[280px] md:w-[380px] aspect-[4/5] bg-white rounded-[2rem] shadow-xl border border-white flex items-center justify-center p-8 transition-transform hover:scale-[1.01] duration-500 z-10 select-none">
-              {heroProduct && heroProduct.product_images?.[0]?.url ? (
-                <img 
-                  src={heroProduct.product_images[0].url} 
-                  alt={heroProduct.name} 
-                  className="w-full h-full object-contain mix-blend-multiply drop-shadow-[0_20px_25px_rgba(0,0,0,0.12)]"
-                />
-              ) : (
-                <div className="text-5xl text-[#ffeef1] font-black tracking-widest">TK</div>
-              )}
+            <div className="relative w-[280px] md:w-[380px] aspect-[4/5] bg-white rounded-[2rem] shadow-xl border border-white overflow-hidden transition-transform hover:scale-[1.01] duration-500 z-10 select-none">
+              <img 
+                src="/hero-spiderman.png" 
+                alt="ThreeKnots Handcrafted Bracelets" 
+                className="w-full h-full object-cover"
+              />
             </div>
-
-            {/* Floating Product Cards (Desktop only) */}
-            {floatingProducts && floatingProducts.length > 0 && (
-              <div className="absolute inset-0 pointer-events-none hidden md:block">
-                {/* Floating Card 1: Top Left */}
-                {floatingProducts[0] && (
-                  <Link href={`/product/${floatingProducts[0].slug}`} className="absolute top-[8%] left-[2%] bg-white p-3 rounded-2xl shadow-xl border border-gray-50 flex items-center gap-3 z-20 hover:scale-105 pointer-events-auto transition-transform duration-300">
-                    <div className="w-12 h-12 bg-gray-50 rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0">
-                      <img src={floatingProducts[0].product_images?.[0]?.url} alt="" className="w-10 h-10 object-contain" />
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-bold leading-tight max-w-[90px] truncate text-[#171717]">{floatingProducts[0].name}</h4>
-                      <p className="text-[10px] font-black text-[#f72585] mt-0.5">₹{floatingProducts[0].price}</p>
-                    </div>
-                  </Link>
-                )}
-
-                {/* Floating Card 2: Bottom Right */}
-                {floatingProducts[1] && (
-                  <Link href={`/product/${floatingProducts[1].slug}`} className="absolute bottom-[8%] right-[2%] bg-white p-3 rounded-2xl shadow-xl border border-gray-50 flex items-center gap-3 z-20 hover:scale-105 pointer-events-auto transition-transform duration-300">
-                    <div className="w-12 h-12 bg-gray-50 rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0">
-                      <img src={floatingProducts[1].product_images?.[0]?.url} alt="" className="w-10 h-10 object-contain" />
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-bold leading-tight max-w-[90px] truncate text-[#171717]">{floatingProducts[1].name}</h4>
-                      <p className="text-[10px] font-black text-[#f72585] mt-0.5">₹{floatingProducts[1].price}</p>
-                    </div>
-                  </Link>
-                )}
-              </div>
-            )}
           </div>
         </div>
       </section>
