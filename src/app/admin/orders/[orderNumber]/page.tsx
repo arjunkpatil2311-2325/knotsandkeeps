@@ -27,10 +27,15 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
     const supabaseServer = await createClient()
     
     // Delete children first to avoid foreign key constraint errors
-    await supabaseServer.from('order_status_history').delete().eq('order_id', order.id)
-    await supabaseServer.from('order_items').delete().eq('order_id', order.id)
+    const { error: hError } = await supabaseServer.from('order_status_history').delete().eq('order_id', order.id)
+    if (hError) throw new Error("History delete failed: " + hError.message)
+
+    const { error: iError } = await supabaseServer.from('order_items').delete().eq('order_id', order.id)
+    if (iError) throw new Error("Items delete failed: " + iError.message)
+
     // Delete order
-    await supabaseServer.from('orders').delete().eq('id', order.id)
+    const { error: oError } = await supabaseServer.from('orders').delete().eq('id', order.id)
+    if (oError) throw new Error("Order delete failed: " + oError.message)
 
     revalidatePath('/admin/orders')
     redirect('/admin/orders')
