@@ -7,29 +7,50 @@ import { WishlistButton } from '@/components/WishlistButton'
 export default async function Home() {
   const supabase = await createClient()
 
-  // 1. Fetch hero product
-  const { data: heroProduct } = await supabase
+  // 1. Fetch hero product (prioritize is_featured, fallback to show_on_homepage)
+  let { data: heroProduct } = await supabase
     .from('products')
     .select('*, product_images(url)')
     .eq('status', 'published')
-    .eq('show_on_homepage', true)
+    .eq('is_featured', true)
     .limit(1)
     .maybeSingle()
 
-  // 2. Fetch floating products for hero collage
-  const { data: floatingProducts } = await supabase
+  if (!heroProduct) {
+    const { data: fallbackHero } = await supabase
+      .from('products')
+      .select('*, product_images(url)')
+      .eq('status', 'published')
+      .eq('show_on_homepage', true)
+      .limit(1)
+      .maybeSingle()
+    heroProduct = fallbackHero
+  }
+
+  // 2. Fetch floating products for hero collage (prioritize is_featured, fallback to show_on_homepage)
+  let { data: floatingProducts } = await supabase
     .from('products')
     .select('*, product_images(url)')
     .eq('status', 'published')
-    .eq('show_on_homepage', true)
+    .eq('is_featured', true)
     .limit(3)
+
+  if (!floatingProducts || floatingProducts.length < 2) {
+    const { data: fallbackFloating } = await supabase
+      .from('products')
+      .select('*, product_images(url)')
+      .eq('status', 'published')
+      .eq('show_on_homepage', true)
+      .limit(3)
+    floatingProducts = fallbackFloating
+  }
 
   // 3. Fetch new arrivals
   const { data: newArrivals } = await supabase
     .from('products')
     .select('*, product_images(url)')
     .eq('status', 'published')
-    .eq('show_on_homepage', true)
+    .eq('is_new_arrival', true)
     .order('created_at', { ascending: false })
     .limit(4)
 
@@ -38,7 +59,7 @@ export default async function Home() {
     .from('products')
     .select('*, product_images(url)')
     .eq('status', 'published')
-    .eq('show_on_homepage', true)
+    .eq('is_bestseller', true)
     .limit(3)
 
   // 5. Fetch all homepage products for the main section
