@@ -20,8 +20,8 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
 
   // Customer Site Layout
   return (
-    <div className="min-h-screen bg-brand-bg flex items-center justify-center p-2 sm:p-4 md:p-6 lg:p-8">
-      <div className="w-full max-w-[1400px] min-h-[90vh] bg-brand-cream rounded-[2rem] sm:rounded-[3rem] shadow-[0_20px_60px_-15px_rgba(244,164,164,0.3)] border border-white/50 overflow-hidden flex flex-col relative">
+    <div className="min-h-screen bg-[#FFEAF0] flex items-center justify-center p-2 sm:p-4 md:p-6 lg:p-8">
+      <div className="w-full max-w-[1400px] min-h-[90vh] bg-[#FFF0F3] rounded-[2rem] sm:rounded-[3rem] shadow-[0_20px_60px_-15px_rgba(244,164,164,0.3)] border border-white/50 overflow-hidden flex flex-col relative">
         {/* Subtle decorative background gradients */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-40 z-0">
           <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-brand-blush blur-[100px]" />
