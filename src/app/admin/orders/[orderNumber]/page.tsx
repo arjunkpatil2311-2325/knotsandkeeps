@@ -1,7 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { ArrowLeft, Package, Truck, Receipt } from 'lucide-react'
+import { ArrowLeft, Package, Truck, Receipt, Trash2 } from 'lucide-react'
 import { revalidatePath } from 'next/cache'
 
 export default async function AdminOrderDetailPage({ params }: { params: Promise<{ orderNumber: string }> }) {
@@ -22,6 +22,20 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
   }
 
   // Server Actions for Updates
+  async function deleteOrder() {
+    'use server'
+    const supabaseServer = await createClient()
+    
+    // Delete children first to avoid foreign key constraint errors
+    await supabaseServer.from('order_status_history').delete().eq('order_id', order.id)
+    await supabaseServer.from('order_items').delete().eq('order_id', order.id)
+    // Delete order
+    await supabaseServer.from('orders').delete().eq('id', order.id)
+
+    revalidatePath('/admin/orders')
+    redirect('/admin/orders')
+  }
+
   async function updateOrderStatus(formData: FormData) {
     'use server'
     const status = formData.get('status') as string
@@ -176,13 +190,20 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
         <span className="px-3 py-1 bg-white text-black border-2 border-black text-sm font-bold rounded-lg ml-auto shadow-[2px_2px_0_0_#000]">
           {new Date(order.created_at).toLocaleString()}
         </span>
-        <Link 
-          href={`/invoice/${order.order_number}`}
-          target="_blank" 
-          className="ml-2 inline-flex items-center gap-2 bg-neo-blue border-2 border-black text-black px-4 py-1.5 rounded-lg text-sm font-bold shadow-[2px_2px_0_0_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
-        >
-          <Receipt className="w-4 h-4" /> View Invoice
-        </Link>
+        <div className="ml-2 flex items-center gap-2">
+          <Link 
+            href={`/invoice/${order.order_number}`}
+            target="_blank" 
+            className="inline-flex items-center gap-2 bg-neo-blue border-2 border-black text-black px-4 py-1.5 rounded-lg text-sm font-bold shadow-[2px_2px_0_0_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+          >
+            <Receipt className="w-4 h-4" /> View Invoice
+          </Link>
+          <form action={deleteOrder}>
+            <button type="submit" className="inline-flex items-center gap-2 bg-neo-pink border-2 border-black text-black px-4 py-1.5 rounded-lg text-sm font-bold shadow-[2px_2px_0_0_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all">
+              <Trash2 className="w-4 h-4" /> Delete Order
+            </button>
+          </form>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
