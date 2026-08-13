@@ -1,13 +1,25 @@
 import { createProduct } from '../actions'
 import Link from 'next/link'
 
-export default function CreateProductPage() {
+export default async function CreateProductPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>
+}) {
+  const { error } = await searchParams
+
   return (
     <div className="max-w-3xl mx-auto">
       <div className="mb-6">
         <h1 className="text-3xl font-black text-black tracking-tight">Create Product</h1>
         <p className="mt-1 text-sm text-black font-bold">Add a new bracelet to your store.</p>
       </div>
+
+      {error && (
+        <div className="mb-6 bg-red-100 border-2 border-black text-black px-4 py-3 rounded-lg relative font-bold" role="alert">
+          <span className="block sm:inline">{error}</span>
+        </div>
+      )}
 
       <form action={createProduct} className="space-y-8 divide-y-2 divide-black bg-white border-2 border-black shadow-[4px_4px_0_0_#000] rounded-xl p-6 sm:p-8">
         <div className="space-y-8 divide-y-2 divide-black sm:space-y-5">

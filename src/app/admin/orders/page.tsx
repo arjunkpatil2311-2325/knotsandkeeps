@@ -2,7 +2,12 @@ import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
 import { Eye } from 'lucide-react'
 
-export default async function AdminOrdersPage() {
+export default async function AdminOrdersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>
+}) {
+  const { error: urlError } = await searchParams
   const supabase = await createClient()
 
   // Fetch orders sorted by newest first
@@ -34,6 +39,12 @@ export default async function AdminOrdersPage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-black text-black tracking-tight">Orders</h1>
       </div>
+
+      {urlError && (
+        <div className="mb-6 bg-red-100 border-2 border-black text-black px-4 py-3 rounded-lg relative font-bold" role="alert">
+          <span className="block sm:inline">{urlError}</span>
+        </div>
+      )}
 
       <div className="bg-transparent md:bg-white md:shadow-[4px_4px_0_0_#000] overflow-hidden md:rounded-xl md:border-2 border-black">
         <div className="overflow-x-auto custom-scrollbar">
