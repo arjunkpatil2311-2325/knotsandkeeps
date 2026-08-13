@@ -41,11 +41,13 @@ export default async function Home() {
     .eq('show_on_homepage', true)
     .limit(3)
 
-  // 5. Fetch categories
-  const { data: categories } = await supabase
-    .from('categories')
-    .select('*')
-    .limit(6)
+  // 5. Fetch all homepage products for the main section
+  const { data: homepageProducts } = await supabase
+    .from('products')
+    .select('*, product_images(url)')
+    .eq('status', 'published')
+    .eq('show_on_homepage', true)
+    .order('created_at', { ascending: false })
 
   return (
     <div className="bg-[#f7f7f7] min-h-screen text-[#171717]">
@@ -166,40 +168,93 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 5. SHOP BY CATEGORIES (Collections) */}
-      {categories && categories.length > 0 && (
-        <section className="py-20 px-4 md:px-16 bg-[#f7f7f7]">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
-              <div>
-                <h2 className="text-3xl md:text-4xl font-sans font-black tracking-tight text-[#111111]">SHOP BY COLLECTIONS</h2>
-                <p className="text-xs md:text-sm text-[#666666] mt-1">Explore our custom ranges curated for you.</p>
-              </div>
-              <Link href="/collections" className="text-xs font-bold text-[#f72585] hover:underline flex items-center gap-1 uppercase tracking-wider">
-                View All Categories <ArrowRight className="w-4 h-4" />
-              </Link>
+      {/* 5. OUR BRACELETS */}
+      <section className="py-20 px-4 md:px-16 bg-[#f7f7f7]">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-sans font-black tracking-tight text-[#111111]">OUR BRACELETS</h2>
+              <p className="text-xs md:text-sm text-[#666666] mt-1">Discover handcrafted designs added to the homepage.</p>
             </div>
-            
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
-              {categories.map((category) => (
-                <Link 
-                  href={`/shop?category=${category.slug}`} 
-                  key={category.id} 
-                  className="group flex flex-col bg-white rounded-[2rem] p-4 shadow-sm hover:shadow-md transition-all border border-[#E8E8E8] hover:-translate-y-1"
-                >
-                  <div className="w-full aspect-square bg-[#ffeef1] rounded-[1.5rem] flex items-center justify-center overflow-hidden mb-4 relative">
-                    <span className="text-4xl font-sans font-black text-[#f72585]/20 uppercase group-hover:scale-110 transition-transform duration-500 ease-out select-none">
-                      {category.name.charAt(0)}
-                    </span>
-                  </div>
-                  <h4 className="text-xs font-bold text-center text-[#171717] group-hover:text-[#f72585] transition-colors leading-tight line-clamp-1">{category.name}</h4>
-                  <span className="text-[10px] font-bold text-center text-[#666666] mt-1.5 opacity-80 group-hover:opacity-100 transition-opacity">Shop Now &rarr;</span>
-                </Link>
-              ))}
-            </div>
+            <Link href="/shop" className="text-xs font-bold text-[#f72585] hover:underline flex items-center gap-1 uppercase tracking-wider">
+              View All Bracelets <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
-        </section>
-      )}
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {homepageProducts && homepageProducts.length > 0 ? (
+              homepageProducts.map((product, index) => {
+                const hasImage = product.product_images?.[0]?.url
+                return (
+                  <div 
+                    key={product.id} 
+                    className="group bg-white rounded-[2rem] p-4 shadow-sm hover:shadow-lg transition-all duration-300 border border-[#E8E8E8] hover:-translate-y-1 relative flex flex-col slide-up"
+                    style={{ animationDelay: `${index * 0.05}s` }}
+                  >
+                    <Link href={`/product/${product.slug}`} className="block relative aspect-square bg-[#f7f7f7] rounded-2xl overflow-hidden mb-4">
+                      {hasImage ? (
+                        <img 
+                          src={product.product_images[0].url} 
+                          alt={product.name} 
+                          className="w-full h-full object-contain p-6 group-hover:scale-105 transition-transform duration-500 ease-out"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-300 font-bold text-xs">NO IMAGE</div>
+                      )}
+                      
+                      <div className="absolute top-3 right-3 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <WishlistButton productId={product.id} />
+                      </div>
+
+                      {product.discount_percentage > 0 && (
+                        <span className="absolute top-3 left-3 bg-[#f72585] text-white text-[9px] font-bold px-2 py-0.5 rounded-full z-20">
+                          -{product.discount_percentage}%
+                        </span>
+                      )}
+
+                      {product.stock_quantity === 0 && (
+                        <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-20">
+                          <span className="bg-[#111111] text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">SOLD OUT</span>
+                        </div>
+                      )}
+                    </Link>
+
+                    <div className="flex-1 flex flex-col justify-between">
+                      <div>
+                        <Link href={`/product/${product.slug}`} className="block">
+                          <h3 className="text-sm font-bold text-[#171717] truncate hover:text-[#f72585] transition-colors leading-snug">{product.name}</h3>
+                        </Link>
+                        <div className="flex items-center gap-1 mt-1 text-amber-400">
+                          <Star className="w-3 h-3 fill-current" />
+                          <Star className="w-3 h-3 fill-current" />
+                          <Star className="w-3 h-3 fill-current" />
+                          <Star className="w-3 h-3 fill-current" />
+                          <Star className="w-3 h-3 fill-current" />
+                          <span className="text-[10px] text-[#666666] font-semibold ml-1">(5.0)</span>
+                        </div>
+                      </div>
+                      
+                      <div className="mt-4 flex items-center justify-between pt-3 border-t border-gray-50">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-black text-[#111111]">₹{product.price}</span>
+                          {product.compare_at_price && (
+                            <span className="text-xs text-[#666666] line-through">₹{product.compare_at_price}</span>
+                          )}
+                        </div>
+                        <QuickAddButton product={product} layout="icon" />
+                      </div>
+                    </div>
+                  </div>
+                )
+              })
+            ) : (
+              <div className="col-span-full py-12 text-center border border-dashed border-[#E8E8E8] rounded-3xl bg-white">
+                <p className="font-sans font-semibold text-[#666666]">Select "Show on Homepage" inside the admin panel to display bracelets here.</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
 
       {/* 6. NEW ARRIVALS */}
       {newArrivals && newArrivals.length > 0 && (
