@@ -7,14 +7,21 @@ import { redirect } from 'next/navigation'
 export async function createProduct(formData: FormData) {
   const supabase = await createClient()
 
-  const name = formData.get('name') as string
-  const slug = formData.get('slug') as string
-  const short_description = formData.get('short_description') as string
-  const description = formData.get('description') as string
-  const price = parseFloat(formData.get('price') as string)
-  const compare_at_price = formData.get('compare_at_price') ? parseFloat(formData.get('compare_at_price') as string) : null
-  const stock_quantity = parseInt(formData.get('stock_quantity') as string)
-  const sku = formData.get('sku') as string
+  const name = formData.get('name') as string || ''
+  const slug = formData.get('slug') as string || ''
+  const short_description = formData.get('short_description') as string || null
+  const description = formData.get('description') as string || null
+  
+  const priceRaw = formData.get('price') as string
+  const price = priceRaw ? parseFloat(priceRaw) : 0
+  
+  const compareAtRaw = formData.get('compare_at_price') as string
+  const compare_at_price = compareAtRaw ? parseFloat(compareAtRaw) : null
+  
+  const stockRaw = formData.get('stock_quantity') as string
+  const stock_quantity = stockRaw ? parseInt(stockRaw) : 0
+  
+  const sku = formData.get('sku') as string || null
   const status = formData.get('status') as string || 'draft'
   
   const is_featured = formData.get('is_featured') === 'on'
@@ -107,14 +114,21 @@ export async function updateProduct(formData: FormData) {
   const supabase = await createClient()
 
   const id = formData.get('id') as string
-  const name = formData.get('name') as string
-  const slug = formData.get('slug') as string
-  const short_description = formData.get('short_description') as string
-  const description = formData.get('description') as string
-  const price = parseFloat(formData.get('price') as string)
-  const compare_at_price = formData.get('compare_at_price') ? parseFloat(formData.get('compare_at_price') as string) : null
-  const stock_quantity = parseInt(formData.get('stock_quantity') as string)
-  const sku = formData.get('sku') as string
+  const name = formData.get('name') as string || ''
+  const slug = formData.get('slug') as string || ''
+  const short_description = formData.get('short_description') as string || null
+  const description = formData.get('description') as string || null
+  
+  const priceRaw = formData.get('price') as string
+  const price = priceRaw ? parseFloat(priceRaw) : 0
+  
+  const compareAtRaw = formData.get('compare_at_price') as string
+  const compare_at_price = compareAtRaw ? parseFloat(compareAtRaw) : null
+  
+  const stockRaw = formData.get('stock_quantity') as string
+  const stock_quantity = stockRaw ? parseInt(stockRaw) : 0
+  
+  const sku = formData.get('sku') as string || null
   const status = formData.get('status') as string || 'draft'
   
   const is_featured = formData.get('is_featured') === 'on'
