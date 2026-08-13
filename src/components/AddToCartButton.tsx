@@ -1,6 +1,7 @@
 'use client'
 
 import { useCartStore } from '@/store/cart'
+import { ShoppingBag } from 'lucide-react'
 
 interface AddToCartProps {
   product: {
@@ -26,31 +27,34 @@ export default function AddToCartButton({ product }: AddToCartProps) {
       ...product,
       quantity: 1
     })
-    alert("Added to cart!")
+    // Optionally open the cart drawer here
+    const cartButton = document.querySelector('button[onClick*="setIsCartOpen"]') as HTMLButtonElement
+    if (cartButton) cartButton.click()
   }
 
   return (
-    <form className="mt-6" onSubmit={handleAdd}>
-      <div className="mt-10 flex sm:flex-col1">
+    <form className="mt-8" onSubmit={handleAdd}>
+      <div className="flex sm:flex-col1">
         {isSoldOut ? (
           <button
             disabled
-            className="max-w-xs flex-1 bg-gray-300 border border-transparent rounded-md py-4 px-8 flex items-center justify-center text-base font-medium text-gray-500 uppercase tracking-wider cursor-not-allowed sm:w-full"
+            className="w-full bg-gray-200 border border-transparent rounded-full py-4 px-8 flex items-center justify-center gap-2 text-[15px] font-bold text-gray-400 uppercase tracking-widest cursor-not-allowed shadow-inner"
           >
             Sold Out
           </button>
         ) : (
           <button
             type="submit"
-            className="max-w-xs flex-1 bg-black border border-transparent rounded-md py-4 px-8 flex items-center justify-center text-base font-medium text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-black uppercase tracking-wider sm:w-full transition-colors"
+            className="w-full bg-black border border-transparent rounded-full py-4 px-8 flex items-center justify-center gap-3 text-[15px] font-bold text-white hover:bg-brand-accent hover:shadow-[0_10px_20px_-10px_rgba(224,122,122,0.6)] uppercase tracking-widest transition-all duration-300"
           >
+            <ShoppingBag className="w-5 h-5" strokeWidth={2.5} />
             Add to Cart
           </button>
         )}
       </div>
       
       {isLowStock && (
-        <p className="mt-4 text-sm text-yellow-600 font-medium">
+        <p className="mt-4 text-sm text-brand-accent font-bold text-center">
           Hurry, only {product.stock_quantity} left in stock!
         </p>
       )}

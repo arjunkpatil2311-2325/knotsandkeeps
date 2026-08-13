@@ -5,6 +5,7 @@ import { useCartStore } from '@/store/cart'
 import { createOrder } from './actions'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { CheckCircle2, ChevronRight, Lock } from 'lucide-react'
 
 export function CheckoutForm({ settings }: { settings: any }) {
   const { items, getCartTotal, clearCart } = useCartStore()
@@ -31,11 +32,17 @@ export function CheckoutForm({ settings }: { settings: any }) {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4">
-        <h1 className="text-2xl font-bold mb-4">Your cart is empty</h1>
-        <Link href="/shop" className="bg-black text-white px-6 py-3 rounded text-sm font-medium tracking-wider">
-          RETURN TO SHOP
-        </Link>
+      <div className="min-h-[80vh] flex flex-col items-center justify-center p-4">
+        <div className="bg-white rounded-[3rem] p-12 text-center max-w-md w-full border border-brand-rose/20 shadow-sm">
+          <div className="w-24 h-24 bg-brand-soft-pink/30 rounded-full mx-auto flex items-center justify-center mb-6">
+            <span className="text-4xl">🛍️</span>
+          </div>
+          <h1 className="text-2xl font-black mb-2 text-black">Your cart is empty</h1>
+          <p className="text-gray-500 font-medium mb-8">Let's find something beautiful for you.</p>
+          <Link href="/shop" className="block w-full bg-black text-white px-8 py-4 rounded-full text-[15px] font-bold tracking-widest hover:bg-brand-accent hover:shadow-[0_10px_20px_-10px_rgba(224,122,122,0.6)] transition-all duration-300">
+            CONTINUE SHOPPING
+          </Link>
+        </div>
       </div>
     )
   }
@@ -81,227 +88,301 @@ export function CheckoutForm({ settings }: { settings: any }) {
     }
   }
 
+  const InputLabel = ({ children, required }: { children: React.ReactNode, required?: boolean }) => (
+    <label className="block text-[13px] font-bold text-gray-700 uppercase tracking-wider mb-2">
+      {children} {required && <span className="text-brand-accent">*</span>}
+    </label>
+  )
+
+  const Input = (props: any) => (
+    <input 
+      {...props} 
+      className={`w-full bg-white border border-brand-rose/20 rounded-2xl p-4 text-[15px] font-medium text-black focus:outline-none focus:border-brand-accent focus:ring-4 focus:ring-brand-accent/10 transition-all ${props.className || ''}`} 
+    />
+  )
+
   return (
-    <div className="bg-gray-50 min-h-screen py-12">
-      <div className="container mx-auto px-4 max-w-6xl">
-        <h1 className="text-3xl font-bold mb-8">Checkout</h1>
+    <div className="w-full pb-24">
+      {/* Header */}
+      <div className="bg-brand-soft-pink/30 rounded-[2rem] p-8 sm:p-12 mb-12 border border-white text-center">
+        <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-black mb-4">Secure Checkout</h1>
+        <div className="flex items-center justify-center gap-2 text-sm font-bold text-gray-500">
+          <Lock className="w-4 h-4 text-brand-accent" strokeWidth={2.5} />
+          SSL Encrypted Connection
+        </div>
+      </div>
+      
+      <form action={handleSubmit} className="flex flex-col lg:flex-row gap-8 lg:gap-12">
         
-        <form action={handleSubmit} className="flex flex-col lg:flex-row gap-12">
+        {/* Left Column - Forms */}
+        <div className="flex-1 space-y-8">
           
-          {/* Left Column - Forms */}
-          <div className="flex-1 space-y-10">
+          {/* Customer Details */}
+          <section className="bg-white p-8 sm:p-10 rounded-[2.5rem] shadow-sm border border-brand-rose/10 relative overflow-hidden group hover:border-brand-soft-pink transition-colors duration-500">
+            <div className="absolute top-0 left-0 w-2 h-full bg-brand-soft-pink" />
+            <h2 className="text-2xl font-black mb-8 text-black flex items-center gap-3">
+              <span className="w-8 h-8 rounded-full bg-brand-bg flex items-center justify-center text-[15px] text-brand-accent">1</span>
+              Customer Details
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="md:col-span-2">
+                <InputLabel required>Full Name</InputLabel>
+                <Input required name="customer_name" type="text" placeholder="Jane Doe" />
+              </div>
+              <div>
+                <InputLabel required>Email Address</InputLabel>
+                <Input required name="customer_email" type="email" placeholder="jane@example.com" />
+              </div>
+              <div>
+                <InputLabel required>Mobile Number</InputLabel>
+                <Input required name="customer_phone" type="tel" pattern="[0-9]{10}" title="10 digit mobile number" placeholder="9876543210" />
+              </div>
+            </div>
+          </section>
+
+          {/* Shipping Details */}
+          <section className="bg-white p-8 sm:p-10 rounded-[2.5rem] shadow-sm border border-brand-rose/10 relative overflow-hidden group hover:border-brand-soft-pink transition-colors duration-500">
+            <div className="absolute top-0 left-0 w-2 h-full bg-brand-soft-pink" />
+            <h2 className="text-2xl font-black mb-8 text-black flex items-center gap-3">
+              <span className="w-8 h-8 rounded-full bg-brand-bg flex items-center justify-center text-[15px] text-brand-accent">2</span>
+              Shipping Address
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="md:col-span-2">
+                <InputLabel required>Address Line 1</InputLabel>
+                <Input required name="shipping_address" type="text" placeholder="House/Flat No., Building Name" />
+              </div>
+              <div className="md:col-span-2">
+                <InputLabel>Address Line 2 (Optional)</InputLabel>
+                <Input name="shipping_address_2" type="text" placeholder="Street, Area, Landmark" />
+              </div>
+              <div>
+                <InputLabel required>City</InputLabel>
+                <Input required name="shipping_city" type="text" placeholder="Mumbai" />
+              </div>
+              <div>
+                <InputLabel required>State</InputLabel>
+                <Input required name="shipping_state" type="text" placeholder="Maharashtra" />
+              </div>
+              <div>
+                <InputLabel required>Pincode</InputLabel>
+                <Input required name="shipping_zip" type="text" pattern="[0-9]{6}" title="6 digit pincode" placeholder="400001" />
+              </div>
+              <div>
+                <InputLabel required>Country</InputLabel>
+                <Input required name="shipping_country" type="text" defaultValue="India" readOnly className="bg-brand-bg/50 text-gray-500 border-transparent cursor-not-allowed" />
+              </div>
+            </div>
+
+            <div className="mt-8 flex items-center bg-brand-bg/50 p-4 rounded-2xl border border-brand-rose/10">
+              <input 
+                type="checkbox" 
+                id="sameAsShipping" 
+                checked={sameAsShipping} 
+                onChange={(e) => setSameAsShipping(e.target.checked)}
+                className="w-5 h-5 rounded-md border-gray-300 text-brand-accent focus:ring-brand-accent cursor-pointer" 
+              />
+              <label htmlFor="sameAsShipping" className="ml-3 block text-[15px] font-bold text-gray-900 cursor-pointer">
+                Billing address is same as shipping
+              </label>
+            </div>
+          </section>
+
+          {/* Billing Details */}
+          {!sameAsShipping && (
+            <section className="bg-white p-8 sm:p-10 rounded-[2.5rem] shadow-sm border border-brand-rose/10 relative overflow-hidden group hover:border-brand-soft-pink transition-colors duration-500">
+              <div className="absolute top-0 left-0 w-2 h-full bg-brand-soft-pink" />
+              <h2 className="text-2xl font-black mb-8 text-black flex items-center gap-3">
+                <span className="w-8 h-8 rounded-full bg-brand-bg flex items-center justify-center text-[15px] text-brand-accent">3</span>
+                Billing Address
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="md:col-span-2">
+                  <InputLabel required>Address Line 1</InputLabel>
+                  <Input required={!sameAsShipping} name="billing_address" type="text" />
+                </div>
+                <div>
+                  <InputLabel required>City</InputLabel>
+                  <Input required={!sameAsShipping} name="billing_city" type="text" />
+                </div>
+                <div>
+                  <InputLabel required>State</InputLabel>
+                  <Input required={!sameAsShipping} name="billing_state" type="text" />
+                </div>
+                <div>
+                  <InputLabel required>Pincode</InputLabel>
+                  <Input required={!sameAsShipping} name="billing_zip" type="text" pattern="[0-9]{6}" />
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* Delivery & Payment Options */}
+          <section className="bg-white p-8 sm:p-10 rounded-[2.5rem] shadow-sm border border-brand-rose/10 relative overflow-hidden group hover:border-brand-soft-pink transition-colors duration-500">
+            <div className="absolute top-0 left-0 w-2 h-full bg-brand-soft-pink" />
+            <h2 className="text-2xl font-black mb-8 text-black flex items-center gap-3">
+              <span className="w-8 h-8 rounded-full bg-brand-bg flex items-center justify-center text-[15px] text-brand-accent">{sameAsShipping ? '3' : '4'}</span>
+              Delivery & Payment
+            </h2>
             
-            {/* Customer Details */}
-            <section className="bg-white p-6 rounded-lg shadow-sm">
-              <h2 className="text-lg font-medium mb-4">1. Customer Details</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
-                  <input required name="customer_name" type="text" className="w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-black focus:border-black" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email Address *</label>
-                  <input required name="customer_email" type="email" className="w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-black focus:border-black" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Mobile Number *</label>
-                  <input required name="customer_phone" type="tel" pattern="[0-9]{10}" title="10 digit mobile number" className="w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-black focus:border-black" placeholder="9876543210" />
-                </div>
-              </div>
-            </section>
-
-            {/* Shipping Details */}
-            <section className="bg-white p-6 rounded-lg shadow-sm">
-              <h2 className="text-lg font-medium mb-4">2. Shipping Address</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Address Line 1 *</label>
-                  <input required name="shipping_address" type="text" className="w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-black focus:border-black" />
-                </div>
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Address Line 2</label>
-                  <input name="shipping_address_2" type="text" className="w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-black focus:border-black" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">City *</label>
-                  <input required name="shipping_city" type="text" className="w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-black focus:border-black" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">State *</label>
-                  <input required name="shipping_state" type="text" className="w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-black focus:border-black" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Pincode *</label>
-                  <input required name="shipping_zip" type="text" pattern="[0-9]{6}" title="6 digit pincode" className="w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-black focus:border-black" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Country</label>
-                  <input required name="shipping_country" type="text" defaultValue="India" readOnly className="w-full border-gray-300 rounded-md shadow-sm p-2 border bg-gray-50 text-gray-500" />
-                </div>
-              </div>
-
-              <div className="mt-6 flex items-center">
-                <input 
-                  type="checkbox" 
-                  id="sameAsShipping" 
-                  checked={sameAsShipping} 
-                  onChange={(e) => setSameAsShipping(e.target.checked)}
-                  className="h-4 w-4 text-black focus:ring-black border-gray-300 rounded" 
-                />
-                <label htmlFor="sameAsShipping" className="ml-2 block text-sm text-gray-900">
-                  Billing address is same as shipping address
-                </label>
-              </div>
-            </section>
-
-            {/* Billing Details */}
-            {!sameAsShipping && (
-              <section className="bg-white p-6 rounded-lg shadow-sm">
-                <h2 className="text-lg font-medium mb-4">3. Billing Address</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Address Line 1 *</label>
-                    <input required={!sameAsShipping} name="billing_address" type="text" className="w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-black focus:border-black" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">City *</label>
-                    <input required={!sameAsShipping} name="billing_city" type="text" className="w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-black focus:border-black" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">State *</label>
-                    <input required={!sameAsShipping} name="billing_state" type="text" className="w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-black focus:border-black" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Pincode *</label>
-                    <input required={!sameAsShipping} name="billing_zip" type="text" pattern="[0-9]{6}" className="w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-black focus:border-black" />
-                  </div>
-                </div>
-              </section>
-            )}
-
-            {/* Delivery & Payment Options */}
-            <section className="bg-white p-6 rounded-lg shadow-sm">
-              <h2 className="text-lg font-medium mb-4">Delivery Method</h2>
-              <div className="space-y-3">
-                <label className={`block border p-4 rounded-md cursor-pointer transition-colors ${deliveryMethod === 'normal' ? 'border-black bg-gray-50' : 'border-gray-200 hover:border-gray-300'}`}>
+            <div className="mb-8">
+              <InputLabel>Delivery Method</InputLabel>
+              <div className="space-y-4 mt-4">
+                <label className={`block p-5 rounded-2xl border-2 cursor-pointer transition-all duration-300 ${deliveryMethod === 'normal' ? 'border-brand-accent bg-brand-soft-pink/10 shadow-[0_4px_20px_-10px_rgba(224,122,122,0.3)]' : 'border-gray-100 hover:border-brand-rose/30 bg-white'}`}>
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <input type="radio" name="delivery" checked={deliveryMethod === 'normal'} onChange={() => setDeliveryMethod('normal')} className="h-4 w-4 text-black focus:ring-black" />
-                      <span className="ml-3 font-medium">Normal Delivery (7-9 days)</span>
+                    <div className="flex items-center gap-4">
+                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${deliveryMethod === 'normal' ? 'border-brand-accent' : 'border-gray-300'}`}>
+                        {deliveryMethod === 'normal' && <div className="w-3 h-3 rounded-full bg-brand-accent" />}
+                      </div>
+                      <div>
+                        <span className="block font-black text-black">Standard Delivery</span>
+                        <span className="block text-sm font-medium text-gray-500">7-9 business days</span>
+                      </div>
                     </div>
-                    <span className="font-bold">{subtotal >= 499 ? 'FREE' : '₹59'}</span>
+                    <span className="text-lg font-black text-brand-accent">{subtotal >= 499 ? 'FREE' : '₹59'}</span>
                   </div>
                 </label>
-                <label className={`block border p-4 rounded-md cursor-pointer transition-colors ${deliveryMethod === 'fast' ? 'border-black bg-gray-50' : 'border-gray-200 hover:border-gray-300'}`}>
+                
+                <label className={`block p-5 rounded-2xl border-2 cursor-pointer transition-all duration-300 ${deliveryMethod === 'fast' ? 'border-brand-accent bg-brand-soft-pink/10 shadow-[0_4px_20px_-10px_rgba(224,122,122,0.3)]' : 'border-gray-100 hover:border-brand-rose/30 bg-white'}`}>
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <input type="radio" name="delivery" checked={deliveryMethod === 'fast'} onChange={() => setDeliveryMethod('fast')} className="h-4 w-4 text-black focus:ring-black" />
-                      <span className="ml-3 font-medium">Fast Delivery (3-5 days)</span>
+                    <div className="flex items-center gap-4">
+                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${deliveryMethod === 'fast' ? 'border-brand-accent' : 'border-gray-300'}`}>
+                        {deliveryMethod === 'fast' && <div className="w-3 h-3 rounded-full bg-brand-accent" />}
+                      </div>
+                      <div>
+                        <span className="block font-black text-black">Express Delivery</span>
+                        <span className="block text-sm font-medium text-gray-500">3-5 business days</span>
+                      </div>
                     </div>
-                    <span className="font-bold">₹99</span>
+                    <span className="text-lg font-black text-black">₹99</span>
                   </div>
                 </label>
               </div>
-            </section>
+            </div>
 
-            <section className="bg-white p-6 rounded-lg shadow-sm">
-              <h2 className="text-lg font-medium mb-4">Payment Options</h2>
-              <div className="space-y-3">
+            <div>
+              <InputLabel>Payment Plan</InputLabel>
+              <div className="space-y-4 mt-4">
                 {settings?.is_100_percent_enabled && (
-                  <label className={`block border p-4 rounded-md cursor-pointer transition-colors ${paymentMethod === 'prepaid' ? 'border-black bg-gray-50' : 'border-gray-200 hover:border-gray-300'}`}>
-                    <div className="flex items-center">
-                      <input type="radio" name="payment" checked={paymentMethod === 'prepaid'} onChange={() => setPaymentMethod('prepaid')} className="h-4 w-4 text-black focus:ring-black" />
-                      <span className="ml-3 font-medium">100% Full Payment</span>
+                  <label className={`block p-5 rounded-2xl border-2 cursor-pointer transition-all duration-300 ${paymentMethod === 'prepaid' ? 'border-brand-accent bg-brand-soft-pink/10 shadow-[0_4px_20px_-10px_rgba(224,122,122,0.3)]' : 'border-gray-100 hover:border-brand-rose/30 bg-white'}`}>
+                    <div className="flex items-center gap-4">
+                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${paymentMethod === 'prepaid' ? 'border-brand-accent' : 'border-gray-300'}`}>
+                        {paymentMethod === 'prepaid' && <div className="w-3 h-3 rounded-full bg-brand-accent" />}
+                      </div>
+                      <div>
+                        <span className="block font-black text-black">Pay 100% Now</span>
+                        <span className="block text-sm font-medium text-gray-500 mt-1">Complete payment securely using Razorpay/UPI</span>
+                      </div>
                     </div>
-                    <p className="ml-7 mt-1 text-sm text-gray-500">Pay the full amount securely using our verified payment method.</p>
                   </label>
                 )}
                 {settings?.is_50_percent_enabled && (
-                  <label className={`block border p-4 rounded-md cursor-pointer transition-colors ${paymentMethod === 'advance' ? 'border-black bg-gray-50' : 'border-gray-200 hover:border-gray-300'}`}>
-                    <div className="flex items-center">
-                      <input type="radio" name="payment" checked={paymentMethod === 'advance'} onChange={() => setPaymentMethod('advance')} className="h-4 w-4 text-black focus:ring-black" />
-                      <span className="ml-3 font-medium">50% Advance Payment</span>
+                  <label className={`block p-5 rounded-2xl border-2 cursor-pointer transition-all duration-300 ${paymentMethod === 'advance' ? 'border-brand-accent bg-brand-soft-pink/10 shadow-[0_4px_20px_-10px_rgba(224,122,122,0.3)]' : 'border-gray-100 hover:border-brand-rose/30 bg-white'}`}>
+                    <div className="flex items-center gap-4">
+                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${paymentMethod === 'advance' ? 'border-brand-accent' : 'border-gray-300'}`}>
+                        {paymentMethod === 'advance' && <div className="w-3 h-3 rounded-full bg-brand-accent" />}
+                      </div>
+                      <div>
+                        <span className="block font-black text-black">50% Advance</span>
+                        <span className="block text-sm font-medium text-gray-500 mt-1">Pay half now to confirm. Link for remaining 50% sent before shipping.</span>
+                      </div>
                     </div>
-                    <p className="ml-7 mt-1 text-sm text-gray-500">Pay 50% now to confirm order. The remaining 50% link will be sent later.</p>
                   </label>
                 )}
               </div>
-            </section>
+            </div>
+          </section>
+          
+        </div>
+
+        {/* Right Column - Summary */}
+        <div className="w-full lg:w-[400px]">
+          <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-brand-rose/20 sticky top-24">
+            <h2 className="text-xl font-black mb-6 text-black">Order Summary</h2>
             
-          </div>
-
-          {/* Right Column - Summary */}
-          <div className="w-full lg:w-96">
-            <div className="bg-white p-6 rounded-lg shadow-sm sticky top-24">
-              <h2 className="text-lg font-medium mb-4">Order Summary</h2>
-              
-              <div className="space-y-4 mb-6 max-h-60 overflow-y-auto pr-2">
-                {items.map(item => (
-                  <div key={item.id} className="flex items-center gap-3">
-                    <div className="w-16 h-16 bg-gray-100 rounded flex-shrink-0 relative">
-                      {item.image_url && <img src={item.image_url} alt={item.name} className="w-full h-full object-cover rounded" />}
-                      <span className="absolute -top-2 -right-2 bg-gray-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                        {item.quantity}
-                      </span>
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900 line-clamp-2">{item.name}</p>
-                      <p className="text-sm text-gray-500">₹{item.price}</p>
-                    </div>
+            <div className="space-y-6 mb-8 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
+              {items.map(item => (
+                <div key={item.id} className="flex gap-4 group">
+                  <div className="w-20 h-20 bg-brand-bg rounded-2xl overflow-hidden flex-shrink-0 flex items-center justify-center p-2 border border-brand-rose/10">
+                    {item.image_url ? (
+                      <img src={item.image_url} alt={item.name} className="w-full h-full object-contain drop-shadow-sm" />
+                    ) : (
+                      <span className="text-[10px] font-bold text-brand-dusty">No Image</span>
+                    )}
+                    <span className="absolute -top-2 -right-2 bg-brand-accent text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full shadow-sm">
+                      {item.quantity}
+                    </span>
                   </div>
-                ))}
-              </div>
-
-              <div className="border-t border-gray-200 pt-4 space-y-3">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Subtotal</span>
-                  <span className="font-medium">₹{subtotal.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Delivery</span>
-                  <span className="font-medium">{deliveryCharge === 0 ? 'FREE' : `₹${deliveryCharge.toFixed(2)}`}</span>
-                </div>
-                <div className="flex justify-between text-lg font-bold border-t border-gray-200 pt-3">
-                  <span>Total</span>
-                  <span>₹{total.toFixed(2)}</span>
-                </div>
-                
-                <div className="bg-blue-50 p-3 rounded text-sm mt-4 border border-blue-100">
-                  <div className="flex justify-between font-bold text-blue-900 mb-1">
-                    <span>{paymentMethod === 'advance' ? 'To Pay Now (50%)' : 'Amount to Pay'}</span>
-                    <span>₹{amountToPay.toFixed(2)}</span>
+                  <div className="flex-1 py-1">
+                    <p className="text-[15px] font-bold text-black line-clamp-2 leading-tight mb-2">{item.name}</p>
+                    <p className="text-sm font-black text-brand-dusty">₹{item.price}</p>
                   </div>
-                  {paymentMethod === 'advance' && (
-                    <div className="flex justify-between text-blue-700">
-                      <span>Remaining Balance</span>
-                      <span>₹{(total - amountToPay).toFixed(2)}</span>
-                    </div>
-                  )}
                 </div>
-              </div>
+              ))}
+            </div>
 
-              {error && (
-                <div className="mt-4 p-3 bg-red-50 text-red-700 text-sm rounded border border-red-200">
-                  {error}
+            <div className="bg-brand-bg rounded-3xl p-6 space-y-4 mb-6">
+              <div className="flex justify-between text-[15px] font-bold text-gray-600">
+                <span>Subtotal</span>
+                <span className="text-black">₹{subtotal.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-[15px] font-bold text-gray-600">
+                <span>Delivery</span>
+                <span className={deliveryCharge === 0 ? "text-brand-accent" : "text-black"}>
+                  {deliveryCharge === 0 ? 'FREE' : `₹${deliveryCharge.toFixed(2)}`}
+                </span>
+              </div>
+              <div className="flex justify-between text-xl font-black text-black pt-4 border-t border-brand-rose/20 mt-4">
+                <span>Total</span>
+                <span>₹{total.toFixed(2)}</span>
+              </div>
+            </div>
+
+            <div className="bg-brand-soft-pink/30 p-6 rounded-3xl border border-brand-rose/20 mb-8">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-[13px] font-bold text-gray-500 uppercase tracking-widest">
+                  {paymentMethod === 'advance' ? 'To Pay Now (50%)' : 'Amount to Pay'}
+                </span>
+                <span className="text-2xl font-black text-brand-accent">₹{amountToPay.toFixed(2)}</span>
+              </div>
+              {paymentMethod === 'advance' && (
+                <div className="flex justify-between text-[13px] font-bold text-gray-500 border-t border-brand-rose/20 pt-3 mt-3">
+                  <span>Remaining Balance</span>
+                  <span>₹{(total - amountToPay).toFixed(2)}</span>
                 </div>
               )}
+            </div>
 
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full mt-6 bg-black text-white py-4 rounded font-bold tracking-widest hover:bg-gray-900 transition-colors disabled:bg-gray-400"
-              >
-                {isSubmitting ? 'PROCESSING...' : `PLACE ORDER & PAY ₹${amountToPay.toFixed(2)}`}
-              </button>
-              
-              <p className="text-xs text-center text-gray-500 mt-4">
-                You will be taken to the payment instructions page.
-              </p>
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 text-red-700 text-sm font-bold rounded-2xl border border-red-200 flex items-start gap-3">
+                <span className="text-xl">⚠️</span>
+                {error}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full bg-black text-white py-5 rounded-full text-[15px] font-bold tracking-widest hover:bg-brand-accent hover:shadow-[0_10px_20px_-10px_rgba(224,122,122,0.6)] transition-all duration-300 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:hover:shadow-none flex items-center justify-center gap-2 group"
+            >
+              {isSubmitting ? (
+                'PROCESSING...'
+              ) : (
+                <>
+                  PLACE ORDER
+                  <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </>
+              )}
+            </button>
+            
+            <div className="flex items-center justify-center gap-2 mt-6 text-[11px] font-bold text-gray-400 uppercase tracking-widest">
+              <Lock className="w-3 h-3" />
+              100% Secure Payment
             </div>
           </div>
-          
-        </form>
-      </div>
+        </div>
+        
+      </form>
     </div>
   )
 }

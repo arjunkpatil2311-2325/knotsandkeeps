@@ -33,11 +33,11 @@ export default async function AdminDashboard() {
     .limit(5)
 
   const stats = [
-    { name: 'Total Products', value: totalProducts || 0, color: 'bg-neo-yellow' },
-    { name: 'Active Products', value: activeProducts || 0, color: 'bg-neo-green' },
-    { name: 'Total Orders', value: totalOrders || 0, color: 'bg-neo-pink' },
-    { name: 'Revenue', value: `₹${totalRevenue.toFixed(2)}`, color: 'bg-neo-purple' },
-    { name: 'Payment Pending', value: paymentPending || 0, color: 'bg-orange-400' },
+    { name: 'Total Products', value: totalProducts || 0, color: 'bg-neo-yellow', href: '/admin/products' },
+    { name: 'Active Products', value: activeProducts || 0, color: 'bg-neo-green', href: '/admin/products?status=published' },
+    { name: 'Total Orders', value: totalOrders || 0, color: 'bg-neo-pink', href: '/admin/orders' },
+    { name: 'Revenue', value: `₹${totalRevenue.toFixed(2)}`, color: 'bg-neo-purple', href: '/admin/orders' },
+    { name: 'Payment Pending', value: paymentPending || 0, color: 'bg-orange-400', href: '/admin/orders?payment_status=pending' },
   ]
 
   return (
@@ -54,13 +54,13 @@ export default async function AdminDashboard() {
 
       <div className="grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-5">
         {stats.map((item) => (
-          <div key={item.name} className="bg-white border-2 border-black overflow-hidden shadow-[4px_4px_0_0_#000] rounded-xl relative flex flex-col hover:-translate-y-1 hover:shadow-[6px_6px_0_0_#000] transition-all duration-200">
+          <Link key={item.name} href={item.href} className="bg-white border-2 border-black overflow-hidden shadow-[4px_4px_0_0_#000] rounded-xl relative flex flex-col hover:-translate-y-1 hover:shadow-[6px_6px_0_0_#000] transition-all duration-200 block">
             <div className={`h-4 w-full border-b-2 border-black ${item.color}`}></div>
             <div className="px-4 py-5 sm:p-6 flex-1">
               <dt className="text-sm font-bold text-black truncate uppercase tracking-wider">{item.name}</dt>
               <dd className="mt-2 text-2xl sm:text-3xl font-black text-black">{item.value}</dd>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
 

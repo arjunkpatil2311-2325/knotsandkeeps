@@ -102,7 +102,7 @@ export function AdminLayoutClient({ children, notifications }: AdminLayoutClient
               >
                 <Menu className="w-6 h-6 font-bold" />
               </button>
-              <Link href="/admin" className="text-xl font-black text-black tracking-tight">K&K</Link>
+              <Link href="/admin" className="text-xl font-black text-black tracking-tight">ThreeKnots</Link>
             </div>
             
             <div className="flex items-center space-x-4">
