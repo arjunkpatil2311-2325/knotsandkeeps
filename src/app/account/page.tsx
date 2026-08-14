@@ -62,7 +62,7 @@ export default async function AccountPage() {
                   <div key={order.id} className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-4">
                       <div>
-                        <p className="text-sm text-gray-500 mb-1">Order #{order.id.slice(0, 8).toUpperCase()}</p>
+                        <p className="text-sm text-gray-500 mb-1">Order #{order.order_number}</p>
                         <p className="font-bold text-black">{new Date(order.created_at).toLocaleDateString('en-US', {
                           year: 'numeric',
                           month: 'long',
@@ -71,17 +71,52 @@ export default async function AccountPage() {
                       </div>
                       <div className="flex gap-3">
                         <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
-                          order.payment_status === 'paid' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+                          order.payment_status === 'fully_paid' ? 'bg-green-100 text-green-700' : 
+                          order.payment_status === 'verification_required' ? 'bg-yellow-100 text-yellow-700' :
+                          order.payment_status === 'failed' ? 'bg-red-100 text-red-700' :
+                          'bg-gray-100 text-gray-700'
                         }`}>
-                          {order.payment_status}
+                          {order.payment_status === 'verification_required' ? 'Verification Required' : order.payment_status.replace('_', ' ')}
                         </span>
                         <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
-                          order.status === 'delivered' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'
+                          order.order_status === 'delivered' ? 'bg-blue-100 text-blue-700' : 
+                          order.order_status === 'payment_confirmed' ? 'bg-green-100 text-green-700' :
+                          order.order_status === 'verification_required' ? 'bg-yellow-100 text-yellow-700' :
+                          'bg-gray-100 text-gray-700'
                         }`}>
-                          {order.status}
+                          {order.order_status === 'payment_confirmed' ? 'Pre-order Confirmed' : order.order_status.replace('_', ' ')}
                         </span>
                       </div>
                     </div>
+
+                    <div className="mb-4 text-sm font-medium text-gray-500 flex items-center justify-between">
+                      <div className="flex-1 text-center">
+                         <span className={order.order_status !== 'pending_payment' ? 'text-brand-accent' : ''}>Payment Verification</span>
+                         <span className="mx-2">→</span>
+                      </div>
+                      <div className="flex-1 text-center">
+                         <span className={['payment_confirmed', 'processing', 'packed', 'shipped', 'out_for_delivery', 'delivered'].includes(order.order_status) ? 'text-brand-accent' : ''}>Confirmed</span>
+                         <span className="mx-2">→</span>
+                      </div>
+                      <div className="flex-1 text-center">
+                         <span className={['processing', 'packed', 'shipped', 'out_for_delivery', 'delivered'].includes(order.order_status) ? 'text-brand-accent' : ''}>Processing</span>
+                         <span className="mx-2">→</span>
+                      </div>
+                      <div className="flex-1 text-center">
+                         <span className={order.order_status === 'delivered' ? 'text-brand-accent' : ''}>Delivered</span>
+                      </div>
+                    </div>
+
+                    {order.payment_status === 'pending' && (
+                       <div className="mb-4">
+                          <Link href={`/checkout/payment/${order.order_number}`} className="text-sm font-bold text-brand-accent underline">Complete Payment to Confirm Pre-order</Link>
+                       </div>
+                    )}
+                    {order.payment_status === 'failed' && (
+                       <div className="mb-4">
+                          <p className="text-sm font-bold text-red-600">Payment Verification Failed. Please contact ThreeKnots support.</p>
+                       </div>
+                    )}
 
                     <div className="border-t border-gray-100 pt-4 mt-4 flex justify-between items-center">
                       <p className="font-bold text-black">Total</p>

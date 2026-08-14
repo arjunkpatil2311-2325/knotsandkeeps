@@ -34,10 +34,17 @@ export default async function AdminOrdersPage({
     }
   }
 
+  const awaitingVerificationCount = orders?.filter(o => o.payment_status === 'verification_required').length || 0
+
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <h1 className="text-3xl font-black text-black tracking-tight">Orders</h1>
+        {awaitingVerificationCount > 0 && (
+           <div className="bg-neo-pink text-black border-2 border-black shadow-[2px_2px_0_0_#000] px-4 py-2 rounded-xl font-black animate-pulse text-sm">
+             Payments Awaiting Verification: {awaitingVerificationCount}
+           </div>
+        )}
       </div>
 
       {urlError && (

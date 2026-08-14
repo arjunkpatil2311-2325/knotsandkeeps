@@ -13,6 +13,7 @@ export function CheckoutForm({ settings }: { settings: any }) {
   
   const [mounted, setMounted] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isRedirecting, setIsRedirecting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   
   const [deliveryMethod, setDeliveryMethod] = useState<'normal' | 'fast'>('normal')
@@ -30,7 +31,7 @@ export function CheckoutForm({ settings }: { settings: any }) {
 
   if (!mounted) return null
 
-  if (items.length === 0) {
+  if (items.length === 0 && !isRedirecting && !isSubmitting) {
     return (
       <div className="min-h-[80vh] flex flex-col items-center justify-center p-4">
         <div className="bg-white rounded-[3rem] p-12 text-center max-w-md w-full border border-brand-rose/20 shadow-sm">
@@ -79,12 +80,13 @@ export function CheckoutForm({ settings }: { settings: any }) {
         return
       }
 
-      clearCart()
-      router.push(`/order-confirmed/${result.orderNumber}`)
+      setIsRedirecting(true)
+      router.push(`/checkout/payment/${result.orderNumber}`)
       
     } catch (err: any) {
       setError(err.message || 'Something went wrong')
       setIsSubmitting(false)
+      setIsRedirecting(false)
     }
   }
 
@@ -260,37 +262,13 @@ export function CheckoutForm({ settings }: { settings: any }) {
               </div>
             </div>
 
-            <div>
-              <InputLabel>Payment Plan</InputLabel>
-              <div className="space-y-4 mt-4">
-                {settings?.is_100_percent_enabled && (
-                  <label className={`block p-5 rounded-2xl border-2 cursor-pointer transition-all duration-300 ${paymentMethod === 'prepaid' ? 'border-brand-accent bg-brand-soft-pink/10 shadow-[0_4px_20px_-10px_rgba(224,122,122,0.3)]' : 'border-gray-100 hover:border-brand-rose/30 bg-white'}`}>
-                    <div className="flex items-center gap-4">
-                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${paymentMethod === 'prepaid' ? 'border-brand-accent' : 'border-gray-300'}`}>
-                        {paymentMethod === 'prepaid' && <div className="w-3 h-3 rounded-full bg-brand-accent" />}
-                      </div>
-                      <div>
-                        <span className="block font-black text-black">Pay 100% Now</span>
-                        <span className="block text-sm font-medium text-gray-500 mt-1">Complete payment securely using Razorpay/UPI</span>
-                      </div>
-                    </div>
-                  </label>
-                )}
-                {settings?.is_50_percent_enabled && (
-                  <label className={`block p-5 rounded-2xl border-2 cursor-pointer transition-all duration-300 ${paymentMethod === 'advance' ? 'border-brand-accent bg-brand-soft-pink/10 shadow-[0_4px_20px_-10px_rgba(224,122,122,0.3)]' : 'border-gray-100 hover:border-brand-rose/30 bg-white'}`}>
-                    <div className="flex items-center gap-4">
-                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${paymentMethod === 'advance' ? 'border-brand-accent' : 'border-gray-300'}`}>
-                        {paymentMethod === 'advance' && <div className="w-3 h-3 rounded-full bg-brand-accent" />}
-                      </div>
-                      <div>
-                        <span className="block font-black text-black">50% Advance</span>
-                        <span className="block text-sm font-medium text-gray-500 mt-1">Pay half now to confirm. Link for remaining 50% sent before shipping.</span>
-                      </div>
-                    </div>
-                  </label>
-                )}
-              </div>
+            <div className="bg-brand-soft-pink/20 p-5 rounded-2xl border border-brand-rose/20 mb-6">
+              <p className="text-[13px] font-bold text-gray-700 leading-relaxed text-center">
+                <span className="bg-brand-accent text-white px-2 py-0.5 rounded-full text-[10px] uppercase tracking-widest mr-2 align-middle">PRE-ORDER</span>
+                Your product will be meticulously prepared after payment confirmation.
+              </p>
             </div>
+            <input type="hidden" name="paymentMethod" value="prepaid" />
           </section>
           
         </div>
@@ -341,16 +319,10 @@ export function CheckoutForm({ settings }: { settings: any }) {
             <div className="bg-brand-soft-pink/30 p-6 rounded-3xl border border-brand-rose/20 mb-8">
               <div className="flex justify-between items-center mb-2">
                 <span className="text-[13px] font-bold text-gray-500 uppercase tracking-widest">
-                  {paymentMethod === 'advance' ? 'To Pay Now (50%)' : 'Amount to Pay'}
+                  Amount to Pay
                 </span>
-                <span className="text-2xl font-black text-brand-accent">₹{amountToPay.toFixed(2)}</span>
+                <span className="text-2xl font-black text-brand-accent">₹{total.toFixed(2)}</span>
               </div>
-              {paymentMethod === 'advance' && (
-                <div className="flex justify-between text-[13px] font-bold text-gray-500 border-t border-brand-rose/20 pt-3 mt-3">
-                  <span>Remaining Balance</span>
-                  <span>₹{(total - amountToPay).toFixed(2)}</span>
-                </div>
-              )}
             </div>
 
             {error && (
@@ -362,14 +334,16 @@ export function CheckoutForm({ settings }: { settings: any }) {
 
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || isRedirecting}
               className="w-full bg-black text-white py-5 rounded-full text-[15px] font-bold tracking-widest hover:bg-brand-accent hover:shadow-[0_10px_20px_-10px_rgba(224,122,122,0.6)] transition-all duration-300 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:hover:shadow-none flex items-center justify-center gap-2 group"
             >
-              {isSubmitting ? (
-                'PROCESSING...'
+              {isRedirecting ? (
+                'TAKING YOU TO PAYMENT...'
+              ) : isSubmitting ? (
+                'CREATING YOUR PRE-ORDER...'
               ) : (
                 <>
-                  PLACE ORDER
+                  PLACE PRE-ORDER
                   <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </>
               )}

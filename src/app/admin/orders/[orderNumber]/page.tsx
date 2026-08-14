@@ -203,13 +203,24 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
           >
             <Receipt className="w-4 h-4" /> View Invoice
           </Link>
-          <form action={deleteOrder}>
-            <button type="submit" className="inline-flex items-center gap-2 bg-neo-pink border-2 border-black text-black px-4 py-1.5 rounded-lg text-sm font-bold shadow-[2px_2px_0_0_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all">
-              <Trash2 className="w-4 h-4" /> Delete Order
-            </button>
-          </form>
+            <form action={deleteOrder}>
+              <button type="submit" className="inline-flex items-center gap-2 bg-neo-pink border-2 border-black text-black px-4 py-1.5 rounded-lg text-sm font-bold shadow-[2px_2px_0_0_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all">
+                <Trash2 className="w-4 h-4" /> Delete Order
+              </button>
+            </form>
+          </div>
         </div>
-      </div>
+        
+        <div className="mb-6 flex gap-4">
+            <a 
+              href={`https://wa.me/${order.customer_phone?.replace(/\D/g, '')}?text=${encodeURIComponent(`Hi! Your ThreeKnots pre-order #${order.order_number} has been confirmed. Your bracelet is now being processed. We'll keep you updated about shipping.`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-green-500 border-2 border-black text-white px-4 py-2 rounded-lg text-sm font-bold shadow-[2px_2px_0_0_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+            >
+              Message on WhatsApp
+            </a>
+        </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
@@ -248,7 +259,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
           <div className="bg-white border-2 border-black shadow-[4px_4px_0_0_#000] rounded-xl p-6 text-black">
             <h2 className="text-lg font-black mb-4 flex items-center gap-2 text-black uppercase tracking-wider"><Truck className="w-5 h-5"/> Order Status & Tracking</h2>
             
-            {order.payment_status === 'pending' ? (
+            {order.payment_status === 'pending' || order.payment_status === 'verification_required' ? (
               <div className="mb-6 p-4 bg-neo-yellow border-2 border-black rounded-xl text-black font-bold shadow-[2px_2px_0_0_#000]">
                 Please verify the payment before updating order status.
               </div>
@@ -325,11 +336,15 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
               </p>
               <p className="flex justify-between pt-3 border-t-2 border-black"><span>Paid:</span> <span className="font-black text-green-600">₹{order.amount_paid.toFixed(2)}</span></p>
               
-              {order.payment_status === 'pending' && (
+              {order.payment_transaction_id && (
+                <p className="flex justify-between pt-3 border-t-2 border-black"><span>UTR:</span> <span className="font-black text-black">{order.payment_transaction_id}</span></p>
+              )}
+              
+              {order.payment_status === 'verification_required' && (
                 <div className="mt-4 p-5 border-2 border-black bg-neo-yellow rounded-xl shadow-[4px_4px_0_0_#000]">
-                  <p className="font-black text-black mb-2 text-center uppercase tracking-wider">PAYMENT PENDING</p>
+                  <p className="font-black text-black mb-2 text-center uppercase tracking-wider animate-pulse">VERIFICATION REQUIRED</p>
                   <p className="text-xs text-black font-bold text-center mb-5">
-                    Verify transaction in your bank before confirming.
+                    Customer submitted UTR: {order.payment_transaction_id}. Please verify transaction in your bank before confirming.
                   </p>
                   <div className="flex gap-3">
                     <form action={verifyPayment} className="flex-1">

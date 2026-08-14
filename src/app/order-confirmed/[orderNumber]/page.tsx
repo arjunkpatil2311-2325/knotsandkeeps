@@ -42,16 +42,16 @@ export default async function OrderStatusPage({ params }: { params: Promise<{ or
             <div className="inline-flex rounded-full bg-white p-4 mb-6 shadow-sm border border-brand-rose/20">
               <CheckCircle className="h-16 w-16 text-brand-accent" strokeWidth={2.5} />
             </div>
-            <h1 className="text-4xl sm:text-6xl font-black text-black mb-4 tracking-tight">Order Confirmed! 🎉</h1>
-            <p className="text-lg text-gray-600 font-medium">Your payment was verified. We're handcrafting your order.</p>
+            <h1 className="text-4xl sm:text-6xl font-black text-black mb-4 tracking-tight">Pre-order Confirmed! 🎉</h1>
+            <p className="text-lg text-gray-600 font-medium">Your payment has been verified and your bracelet is now reserved.</p>
           </>
         ) : isVerificationRequired ? (
           <>
             <div className="inline-flex rounded-full bg-white p-4 mb-6 shadow-sm border border-brand-rose/20">
               <Loader2 className="h-16 w-16 text-black animate-spin" strokeWidth={2.5} />
             </div>
-            <h1 className="text-4xl sm:text-5xl font-black text-black mb-4 tracking-tight">Verifying Payment...</h1>
-            <p className="text-lg text-gray-600 font-medium">Your order will be confirmed once we verify the payment.</p>
+            <h1 className="text-4xl sm:text-5xl font-black text-black mb-4 tracking-tight">Payment Submitted 🟡</h1>
+            <p className="text-lg text-gray-600 font-medium">Your payment details have been submitted for verification. Once your payment is verified, your pre-order will be confirmed and preparation will begin.</p>
           </>
         ) : (
           <>
@@ -59,7 +59,7 @@ export default async function OrderStatusPage({ params }: { params: Promise<{ or
               <AlertCircle className="h-16 w-16 text-black" strokeWidth={2.5} />
             </div>
             <h1 className="text-4xl sm:text-5xl font-black text-black mb-4 tracking-tight">Order Received!</h1>
-            <p className="text-lg text-gray-600 font-medium">Your order is placed. Complete payment to confirm.</p>
+            <p className="text-lg text-gray-600 font-medium">Please complete your payment to place the pre-order.</p>
           </>
         )}
       </div>
@@ -78,10 +78,12 @@ export default async function OrderStatusPage({ params }: { params: Promise<{ or
             <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Total</p>
             <p className="font-black text-brand-accent text-lg">₹{order.total_amount.toFixed(2)}</p>
           </div>
-          <div>
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Type</p>
-            <p className="font-black text-black text-lg capitalize">{order.payment_method === 'advance' ? '50% Advance' : '100% Prepaid'}</p>
-          </div>
+          {isVerificationRequired && (
+            <div>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">UTR</p>
+              <p className="font-black text-black text-lg">{order.payment_transaction_id}</p>
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -132,43 +134,25 @@ export default async function OrderStatusPage({ params }: { params: Promise<{ or
             
             <div className="bg-brand-soft-pink/30 p-8 rounded-3xl border border-brand-rose/20 space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-[13px] font-bold text-gray-500 uppercase tracking-widest">Amount to Pay Now</span>
-                <span className="text-2xl font-black text-brand-accent">₹{order.amount_remaining.toFixed(2)}</span>
+                <span className="text-[13px] font-bold text-gray-500 uppercase tracking-widest">Total Amount</span>
+                <span className="text-2xl font-black text-brand-accent">₹{order.total_amount.toFixed(2)}</span>
               </div>
-              
-              {order.payment_method === 'advance' && (
-                <div className="flex justify-between text-[13px] font-bold text-gray-500 border-t border-brand-rose/20 pt-4 mt-4">
-                  <span>Remaining Balance Later</span>
-                  <span>₹{(order.total_amount - order.amount_remaining).toFixed(2)}</span>
-                </div>
-              )}
             </div>
 
             {/* Payment Instructions Section */}
             {isPending && (
               <div className="mt-8 border-2 border-black rounded-3xl overflow-hidden shadow-[0_10px_20px_-10px_rgba(0,0,0,0.1)]">
                 <div className="bg-black text-white p-4 text-center font-bold tracking-widest text-[13px] uppercase">
-                  Complete Payment
+                  Action Required
                 </div>
-                <div className="p-8 text-center flex flex-col items-center bg-white">
-                  {settings?.qr_image_url && (
-                    <div className="mb-6">
-                      <div className="bg-white p-4 rounded-2xl shadow-[0_0_40px_-10px_rgba(244,164,164,0.4)] border border-brand-rose/20 inline-block mb-4">
-                        <img src={settings.qr_image_url} alt="Payment QR" className="w-48 h-48 object-contain" />
-                      </div>
-                      <p className="text-sm font-bold text-gray-500">Scan to pay <span className="text-brand-accent">₹{order.amount_remaining.toFixed(2)}</span></p>
-                    </div>
-                  )}
-                  
-                  {settings?.payment_instructions && (
-                    <div className="text-sm font-medium text-gray-700 whitespace-pre-wrap bg-brand-bg p-6 rounded-2xl w-full border border-brand-rose/10">
-                      {settings.payment_instructions}
-                    </div>
-                  )}
-                  
-                  <p className="mt-6 text-sm text-gray-600 font-bold bg-gray-50 py-3 px-6 rounded-full inline-block border border-gray-200">
-                    Your order will be confirmed after payment verification.
-                  </p>
+                <div className="p-8 text-center bg-white flex flex-col items-center">
+                  <p className="text-gray-600 font-bold mb-6">You haven't completed the payment step yet.</p>
+                  <Link 
+                    href={`/checkout/payment/${order.order_number}`}
+                    className="px-8 py-4 bg-brand-accent text-white rounded-full text-[13px] font-bold tracking-widest hover:shadow-lg transition-all"
+                  >
+                    PAY NOW TO COMPLETE PRE-ORDER
+                  </Link>
                 </div>
               </div>
             )}
@@ -196,20 +180,17 @@ export default async function OrderStatusPage({ params }: { params: Promise<{ or
           </div>
         </div>
         
-        {isVerified && (
-          <div className="mt-12 pt-8 border-t border-brand-rose/20 flex flex-col sm:flex-row gap-6 justify-center">
-            <Link 
-              href={`/invoice/${order.order_number}`}
-              target="_blank"
-              className="px-8 py-4 bg-white border-2 border-black text-black rounded-full text-[13px] font-bold tracking-widest hover:bg-gray-50 transition-colors text-center flex items-center justify-center gap-3 shadow-sm"
-            >
-              <Receipt className="w-5 h-5" /> PRINT INVOICE
-            </Link>
-            <Link href="/" className="px-10 py-4 bg-black text-white rounded-full text-[13px] font-bold tracking-widest hover:bg-brand-accent hover:shadow-[0_10px_20px_-10px_rgba(224,122,122,0.6)] transition-all duration-300 text-center flex items-center justify-center">
-              CONTINUE SHOPPING
-            </Link>
-          </div>
-        )}
+        <div className="mt-12 pt-8 border-t border-brand-rose/20 flex flex-col sm:flex-row gap-6 justify-center">
+          <Link 
+            href={`/account`}
+            className="px-8 py-4 bg-white border-2 border-black text-black rounded-full text-[13px] font-bold tracking-widest hover:bg-gray-50 transition-colors text-center flex items-center justify-center gap-3 shadow-sm"
+          >
+            VIEW MY ORDER
+          </Link>
+          <Link href="/shop" className="px-10 py-4 bg-black text-white rounded-full text-[13px] font-bold tracking-widest hover:bg-brand-accent hover:shadow-[0_10px_20px_-10px_rgba(224,122,122,0.6)] transition-all duration-300 text-center flex items-center justify-center">
+            CONTINUE SHOPPING
+          </Link>
+        </div>
         
       </div>
     </div>

@@ -35,7 +35,7 @@ export async function createOrder(formData: FormData) {
     const billing_country = shipping_country
 
     const delivery_method = formData.get('deliveryMethod') as 'normal' | 'fast'
-    const payment_method = formData.get('paymentMethod') as 'prepaid' | 'advance'
+    // payment_method is enforced later
 
     // 2. Fetch fresh product data from DB to verify prices and stock
     const productIds = cartItems.map(item => item.id)
@@ -82,7 +82,8 @@ export async function createOrder(formData: FormData) {
     const total_amount = subtotal + delivery_charge - total_discount
 
     const amount_paid = 0
-    const amount_remaining = payment_method === 'advance' ? Math.round(total_amount / 2) : total_amount
+    const payment_method = 'prepaid' // Enforced for pre-order flow
+    const amount_remaining = total_amount
 
     // 4. Create Order
     const { data: order, error: orderError } = await supabase
