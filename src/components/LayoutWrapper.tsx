@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation'
 import { Navbar } from '@/components/Navbar'
 import { MobileNavbar } from '@/components/MobileNavbar'
 import { Footer } from '@/components/Footer'
+import { AuthModal } from '@/components/AuthModal'
 
 export function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -28,6 +29,7 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
       </main>
       <Footer />
       <MobileNavbar />
+      <AuthModal />
     </>
   )
 }

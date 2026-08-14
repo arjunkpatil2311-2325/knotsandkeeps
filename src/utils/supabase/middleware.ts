@@ -37,6 +37,14 @@ export async function updateSession(request: NextRequest) {
 
   const isAdminRoute = request.nextUrl.pathname.startsWith('/admin')
   const isAuthRoute = request.nextUrl.pathname.startsWith('/login')
+  const isProtectedCustomerRoute = request.nextUrl.pathname.startsWith('/checkout') || request.nextUrl.pathname.startsWith('/account')
+
+  if (isProtectedCustomerRoute && !user) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/login'
+    url.searchParams.set('next', request.nextUrl.pathname)
+    return NextResponse.redirect(url)
+  }
 
   if (isAdminRoute) {
     if (!user) {
@@ -63,7 +71,11 @@ export async function updateSession(request: NextRequest) {
   if (isAuthRoute && user) {
     // If user is already logged in, redirect away from login
     const url = request.nextUrl.clone()
-    url.pathname = '/admin'
+    if (process.env.ADMIN_EMAIL && user.email?.toLowerCase() === process.env.ADMIN_EMAIL.toLowerCase()) {
+      url.pathname = '/admin'
+    } else {
+      url.pathname = '/account'
+    }
     return NextResponse.redirect(url)
   }
 

@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { ScrollReveal } from './ScrollReveal'
 
 export function Footer() {
   const pathname = usePathname()
@@ -12,7 +13,7 @@ export function Footer() {
 
   return (
     <footer className="bg-surface pt-16 md:pt-24 pb-32 md:pb-12 px-4 md:px-16 border-t-2 border-on-surface relative z-10">
-      <div className="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12">
+      <ScrollReveal className="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12">
         <div className="md:col-span-4 mb-12 md:mb-0 flex flex-col gap-6">
           <div className="flex items-center gap-3">
             <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-on-surface shadow-md">
@@ -44,7 +45,7 @@ export function Footer() {
             <Link href="/terms" className="font-label-caps text-xs text-on-surface-variant hover:text-secondary transition-colors">Terms of Service</Link>
           </div>
         </div>
-      </div>
+      </ScrollReveal>
       <div className="max-w-[1440px] mx-auto mt-24 pt-8 border-t-2 border-on-surface flex justify-between items-center">
         <span className="font-label-caps text-xs text-on-surface-variant">&copy; {new Date().getFullYear()} ThreeKnots. Made to keep.</span>
       </div>

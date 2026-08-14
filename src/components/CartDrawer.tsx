@@ -4,14 +4,34 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Minus, Plus, ShoppingBag } from 'lucide-react'
 import { useCartStore } from '@/store/cart'
+import { useAuthStore } from '@/store/auth'
+import { createClient } from '@/utils/supabase/client'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 export function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const { items, removeItem, updateQuantity, getCartTotal } = useCartStore()
   const [mounted, setMounted] = useState(false)
+  const [user, setUser] = useState<any>(null)
+  
+  const router = useRouter()
+  const openAuthModal = useAuthStore((state) => state.openAuthModal)
 
   useEffect(() => {
     setMounted(true)
+    
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user)
+    })
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user || null)
+    })
+
+    return () => {
+      subscription.unsubscribe()
+    }
   }, [])
 
   if (!mounted) return null
@@ -141,13 +161,25 @@ export function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClose: () =
                   </div>
                 </div>
                 
-                <Link 
-                  href="/checkout"
-                  onClick={onClose}
-                  className="w-full flex items-center justify-center bg-black text-white py-4 rounded-full text-[15px] font-bold hover:bg-brand-accent hover:shadow-[0_10px_20px_-10px_rgba(224,122,122,0.6)] uppercase tracking-widest transition-all duration-300"
-                >
-                  Checkout
-                </Link>
+                {user ? (
+                  <Link 
+                    href="/checkout"
+                    onClick={onClose}
+                    className="w-full flex items-center justify-center bg-black text-white py-4 rounded-full text-[15px] font-bold hover:bg-brand-accent hover:shadow-[0_10px_20px_-10px_rgba(224,122,122,0.6)] uppercase tracking-widest transition-all duration-300"
+                  >
+                    Checkout
+                  </Link>
+                ) : (
+                  <button 
+                    onClick={() => {
+                      onClose()
+                      openAuthModal('/checkout')
+                    }}
+                    className="w-full flex items-center justify-center bg-black text-white py-4 rounded-full text-[15px] font-bold hover:bg-brand-accent hover:shadow-[0_10px_20px_-10px_rgba(224,122,122,0.6)] uppercase tracking-widest transition-all duration-300"
+                  >
+                    Checkout
+                  </button>
+                )}
               </div>
             )}
           </motion.div>

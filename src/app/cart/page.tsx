@@ -3,11 +3,33 @@
 import { useCartStore } from '@/store/cart'
 import Link from 'next/link'
 import { Trash2, Plus, Minus } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { useAuthStore } from '@/store/auth'
+import { createClient } from '@/utils/supabase/client'
 
 export default function CartPage() {
   const { items, removeItem, updateQuantity, getCartTotal } = useCartStore()
+  const [mounted, setMounted] = useState(false)
+  const [user, setUser] = useState<any>(null)
+  const openAuthModal = useAuthStore((state) => state.openAuthModal)
+
+  useEffect(() => {
+    setMounted(true)
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user)
+    })
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user || null)
+    })
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [])
 
   const subtotal = getCartTotal()
+
+  if (!mounted) return null
 
   if (items.length === 0) {
     return (
@@ -99,9 +121,18 @@ export default function CartPage() {
             </dl>
 
             <div className="mt-6">
-              <Link href="/checkout" className="w-full bg-black border border-transparent rounded-md shadow-sm py-3 px-4 text-base font-medium text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-black flex justify-center transition-colors">
-                Proceed to Checkout
-              </Link>
+              {user ? (
+                <Link href="/checkout" className="w-full bg-black border border-transparent rounded-md shadow-sm py-3 px-4 text-base font-medium text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-black flex justify-center transition-colors">
+                  Proceed to Checkout
+                </Link>
+              ) : (
+                <button onClick={(e) => {
+                  e.preventDefault()
+                  openAuthModal('/checkout')
+                }} className="w-full bg-black border border-transparent rounded-md shadow-sm py-3 px-4 text-base font-medium text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-black flex justify-center transition-colors">
+                  Proceed to Checkout
+                </button>
+              )}
             </div>
           </section>
         </form>

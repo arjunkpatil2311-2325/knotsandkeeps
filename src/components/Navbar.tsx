@@ -3,21 +3,60 @@
 import Link from 'next/link'
 import { ShoppingBag, Search, User, Menu, X, Heart } from 'lucide-react'
 import { useCartStore } from '@/store/cart'
-import { useEffect, useState } from 'react'
-import { usePathname } from 'next/navigation'
+import { useEffect, useState, useRef } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
 import { CartDrawer } from './CartDrawer'
+import { useAuthStore } from '@/store/auth'
+import { createClient } from '@/utils/supabase/client'
 
 export function Navbar() {
   const items = useCartStore((state) => state.items)
   const [mounted, setMounted] = useState(false)
   const [isCartOpen, setIsCartOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [user, setUser] = useState<any>(null)
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [cartBounced, setCartBounced] = useState(false)
+  const prevItemCountRef = useRef(0)
+  
+  const router = useRouter()
+  const openAuthModal = useAuthStore((state) => state.openAuthModal)
   
   useEffect(() => {
     setMounted(true)
+    
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user)
+    })
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user || null)
+    })
+
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [])
+
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 20)
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
   const itemCount = items.reduce((total, item) => total + item.quantity, 0)
+  
+  useEffect(() => {
+    if (mounted && itemCount > prevItemCountRef.current) {
+      setCartBounced(true)
+      const timer = setTimeout(() => setCartBounced(false), 300)
+      prevItemCountRef.current = itemCount
+      return () => clearTimeout(timer)
+    }
+    prevItemCountRef.current = itemCount
+  }, [itemCount, mounted])
+
   const pathname = usePathname()
 
   if (pathname?.startsWith('/admin')) {
@@ -32,7 +71,9 @@ export function Navbar() {
   ]
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 flex flex-col bg-white border-b border-[#E8E8E8] shadow-sm">
+    <header className={`fixed top-0 left-0 w-full z-50 flex flex-col bg-white transition-all duration-300 ${
+      isScrolled ? 'shadow-md border-b-transparent' : 'border-b border-[#E8E8E8] shadow-sm'
+    }`}>
       {/* 1. ANNOUNCEMENT BAR */}
       <div className="w-full bg-[#111111] text-white py-2 text-center overflow-hidden relative z-20 select-none">
         <div className="whitespace-nowrap flex marquee">
@@ -89,23 +130,32 @@ export function Navbar() {
 
         {/* Action Icons (Right) */}
         <div className="flex items-center gap-2 md:gap-4 relative z-50">
-          <button className="text-[#666666] hover:text-[#f72585] p-2 transition-colors">
+          <button className="text-[#666666] hover:text-[#f72585] p-2 transition-colors hover:scale-110">
             <Search className="h-5 w-5" />
           </button>
           
-          <Link href="/wishlist" className="hidden md:block text-[#666666] hover:text-[#f72585] p-2 transition-colors">
+          <Link href="/wishlist" className="hidden md:block text-[#666666] hover:text-[#f72585] p-2 transition-colors hover:scale-110">
             <Heart className="h-5 w-5" />
           </Link>
           
-          <Link href="/login" className="hidden md:block text-[#666666] hover:text-[#f72585] p-2 transition-colors">
-            <User className="h-5 w-5" />
-          </Link>
+          {user ? (
+            <Link href="/account" className="hidden md:block text-[#f72585] hover:text-[#171717] p-2 transition-colors hover:scale-110">
+              <User className="h-5 w-5" />
+            </Link>
+          ) : (
+            <button 
+              onClick={() => openAuthModal('/account')}
+              className="hidden md:block text-[#666666] hover:text-[#f72585] p-2 transition-colors hover:scale-110"
+            >
+              <User className="h-5 w-5" />
+            </button>
+          )}
           
           <button 
             onClick={() => setIsCartOpen(true)} 
-            className="text-[#171717] hover:text-[#f72585] p-2 transition-colors relative group"
+            className={`text-[#171717] hover:text-[#f72585] p-2 transition-all relative group hover:scale-110 ${cartBounced ? 'scale-125 text-[#f72585]' : ''}`}
           >
-            <ShoppingBag className="h-5 w-5 group-hover:scale-105 transition-transform" />
+            <ShoppingBag className="h-5 w-5 transition-transform" />
             {mounted && itemCount > 0 && (
               <span className="absolute top-1 right-1 bg-[#f72585] text-white w-4.5 h-4.5 flex items-center justify-center rounded-full text-[9px] font-bold shadow-sm">
                 {itemCount}
@@ -138,13 +188,25 @@ export function Navbar() {
           >
             <Heart className="h-5 w-5 text-[#f72585]" /> Wishlist
           </Link>
-          <Link 
-            href="/login" 
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="text-sm font-bold uppercase tracking-wider text-[#666666] flex items-center gap-2"
-          >
-            <User className="h-5 w-5" /> Account
-          </Link>
+          {user ? (
+            <Link 
+              href="/account" 
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-sm font-bold uppercase tracking-wider text-[#f72585] flex items-center gap-2"
+            >
+              <User className="h-5 w-5" /> Account
+            </Link>
+          ) : (
+            <button 
+              onClick={() => {
+                setIsMobileMenuOpen(false)
+                openAuthModal('/account')
+              }}
+              className="text-sm font-bold uppercase tracking-wider text-[#666666] flex items-center gap-2 text-left"
+            >
+              <User className="h-5 w-5" /> Account
+            </button>
+          )}
         </div>
       )}
 
