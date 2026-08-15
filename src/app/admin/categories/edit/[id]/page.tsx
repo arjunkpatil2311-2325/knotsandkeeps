@@ -49,9 +49,9 @@ export default async function EditCategoryPage({
           </div>
           
           <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t-2 sm:border-black sm:pt-5">
-            <label htmlFor="slug" className="block text-sm font-black text-black uppercase tracking-wider sm:mt-px sm:pt-2">Slug <span className="text-red-600">*</span></label>
+            <label htmlFor="slug" className="block text-sm font-black text-black uppercase tracking-wider sm:mt-px sm:pt-2">Slug</label>
             <div className="mt-1 sm:mt-0 sm:col-span-2">
-              <input type="text" name="slug" id="slug" defaultValue={category.slug} required className="max-w-lg block w-full bg-white border-2 border-black rounded-lg shadow-[inset_2px_2px_0px_0px_rgba(0,0,0,0.05)] p-2 font-bold text-black focus:ring-0 focus:border-black sm:max-w-xs" />
+              <input type="text" name="slug" id="slug" defaultValue={category.slug} className="max-w-lg block w-full bg-white border-2 border-black rounded-lg shadow-[inset_2px_2px_0px_0px_rgba(0,0,0,0.05)] p-2 font-bold text-black focus:ring-0 focus:border-black sm:max-w-xs" />
             </div>
           </div>
 

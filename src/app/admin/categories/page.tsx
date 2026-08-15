@@ -54,8 +54,8 @@ export default async function AdminCategoriesPage({
               </div>
               
               <div>
-                <label htmlFor="slug" className="block text-sm font-black text-black uppercase tracking-wider mb-1">Slug <span className="text-red-600">*</span></label>
-                <input type="text" name="slug" id="slug" required className="block w-full bg-white border-2 border-black rounded-lg shadow-[inset_2px_2px_0px_0px_rgba(0,0,0,0.05)] p-2 font-bold text-black focus:ring-0 focus:border-black" placeholder="e.g. demon-slayer" />
+                <label htmlFor="slug" className="block text-sm font-black text-black uppercase tracking-wider mb-1">Slug</label>
+                <input type="text" name="slug" id="slug" className="block w-full bg-white border-2 border-black rounded-lg shadow-[inset_2px_2px_0px_0px_rgba(0,0,0,0.05)] p-2 font-bold text-black focus:ring-0 focus:border-black" placeholder="Auto-generated if left blank" />
               </div>
 
               <div>

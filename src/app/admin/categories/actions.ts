@@ -6,11 +6,14 @@ import { redirect } from 'next/navigation'
 
 export async function createCategory(formData: FormData) {
   const name = formData.get('name') as string
-  const slug = formData.get('slug') as string
+  let slug = formData.get('slug') as string
+  if (!slug && name) {
+    slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
+  }
   const description = formData.get('description') as string
 
   if (!name || !slug) {
-    redirect(`/admin/categories?error=${encodeURIComponent('Name and slug are required.')}`)
+    redirect(`/admin/categories?error=${encodeURIComponent('Name is required.')}`)
   }
 
   const supabase = await createClient()
@@ -33,11 +36,14 @@ export async function createCategory(formData: FormData) {
 export async function updateCategory(formData: FormData) {
   const id = formData.get('id') as string
   const name = formData.get('name') as string
-  const slug = formData.get('slug') as string
+  let slug = formData.get('slug') as string
+  if (!slug && name) {
+    slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
+  }
   const description = formData.get('description') as string
 
   if (!id || !name || !slug) {
-    redirect(`/admin/categories/edit/${id}?error=${encodeURIComponent('Name and slug are required.')}`)
+    redirect(`/admin/categories/edit/${id}?error=${encodeURIComponent('Name is required.')}`)
   }
 
   const supabase = await createClient()
