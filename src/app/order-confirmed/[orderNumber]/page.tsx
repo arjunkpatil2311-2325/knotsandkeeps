@@ -48,10 +48,13 @@ export default async function OrderStatusPage({ params }: { params: Promise<{ or
         ) : isVerificationRequired ? (
           <>
             <div className="inline-flex rounded-full bg-white p-4 mb-6 shadow-sm border border-brand-rose/20">
-              <Loader2 className="h-16 w-16 text-black animate-spin" strokeWidth={2.5} />
+              <span className="text-4xl">🟡</span>
             </div>
-            <h1 className="text-4xl sm:text-5xl font-black text-black mb-4 tracking-tight">Payment Submitted 🟡</h1>
-            <p className="text-lg text-gray-600 font-medium">Your payment details have been submitted for verification. Once your payment is verified, your pre-order will be confirmed and preparation will begin.</p>
+            <h1 className="text-4xl sm:text-5xl font-black text-black mb-4 tracking-tight">Payment submitted</h1>
+            <p className="text-lg text-gray-600 font-medium max-w-2xl mx-auto">
+              We've received your payment details.<br/>
+              Your payment is now being manually verified. Once your payment is confirmed, your pre-order will be reserved and moved to processing.
+            </p>
           </>
         ) : (
           <>
@@ -158,12 +161,11 @@ export default async function OrderStatusPage({ params }: { params: Promise<{ or
             )}
             
             {isVerificationRequired && (
-              <div className="mt-8 border border-black/10 bg-brand-bg rounded-3xl p-8 text-center">
-                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-brand-rose/20">
-                  <Loader2 className="w-8 h-8 text-black animate-spin" />
-                </div>
-                <p className="text-black font-black text-xl mb-2">Reviewing Payment...</p>
-                <p className="text-gray-500 font-medium">This usually takes a few minutes during business hours.</p>
+              <div className="mt-8 border border-black/10 bg-brand-bg rounded-3xl p-8 text-center shadow-sm">
+                <p className="text-black font-black text-xl mb-4">You don't need to stay on this page.</p>
+                <p className="text-gray-600 font-medium">
+                  You can safely leave and check your order status anytime from My Orders.
+                </p>
               </div>
             )}
 

@@ -91,7 +91,7 @@ export default async function AccountPage() {
 
                     <div className="mb-4 text-sm font-medium text-gray-500 flex items-center justify-between">
                       <div className="flex-1 text-center">
-                         <span className={order.order_status !== 'pending_payment' ? 'text-brand-accent' : ''}>Payment Verification</span>
+                         <span className={order.order_status !== 'pending_payment' && order.order_status !== 'cancelled' ? 'text-brand-accent' : ''}>Payment Verification</span>
                          <span className="mx-2">→</span>
                       </div>
                       <div className="flex-1 text-center">
@@ -105,6 +105,18 @@ export default async function AccountPage() {
                       <div className="flex-1 text-center">
                          <span className={order.order_status === 'delivered' ? 'text-brand-accent' : ''}>Delivered</span>
                       </div>
+                    </div>
+
+                    <div className="mb-4 text-center p-3 bg-gray-50 rounded-lg text-sm font-bold text-gray-700">
+                      {order.order_status === 'verification_required' && "Payment details received. We're verifying your payment."}
+                      {order.order_status === 'payment_confirmed' && "Payment verified. Your bracelet is reserved."}
+                      {order.order_status === 'processing' && "Your pre-order is being prepared."}
+                      {order.order_status === 'packed' && "Your pre-order is packed and ready to ship."}
+                      {order.order_status === 'shipped' && "Your pre-order has been shipped."}
+                      {order.order_status === 'out_for_delivery' && "Your pre-order is out for delivery."}
+                      {order.order_status === 'delivered' && "Your pre-order has been delivered."}
+                      {order.order_status === 'pending_payment' && "Awaiting payment."}
+                      {order.order_status === 'cancelled' && "This order was cancelled."}
                     </div>
 
                     {order.payment_status === 'pending' && (

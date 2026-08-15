@@ -113,7 +113,8 @@ export async function createOrder(formData: FormData) {
         amount_remaining,
         payment_status: 'pending',
         order_status: 'pending_payment', 
-        payment_transaction_id: null
+        payment_transaction_id: null,
+        expires_at: new Date(Date.now() + 30 * 60000).toISOString()
       })
       .select('id, order_number')
       .single()

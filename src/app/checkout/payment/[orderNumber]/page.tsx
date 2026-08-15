@@ -33,6 +33,25 @@ export default async function PaymentPage({ params }: { params: Promise<{ orderN
     )
   }
 
+  // Handle cancelled or expired locally
+  const isExpired = order.expires_at && new Date(order.expires_at) < new Date()
+  
+  if (order.order_status === 'cancelled' || order.payment_status === 'failed' || (order.payment_status === 'pending' && isExpired)) {
+    return (
+      <div className="max-w-2xl mx-auto py-12 px-4 pb-32 text-center">
+        <div className="bg-white p-8 rounded-[2.5rem] border border-gray-200 shadow-sm">
+           <h1 className="text-2xl font-black mb-4">This pre-order has expired</h1>
+           <p className="font-medium text-gray-600 mb-8 max-w-md mx-auto">
+             Your payment reservation has expired because the 30-minute payment window ended. No payment was confirmed for this order.
+           </p>
+           <Link href="/shop" className="inline-block bg-black text-white px-8 py-4 rounded-full text-[13px] font-bold tracking-widest hover:bg-brand-accent transition-all duration-300 uppercase">
+             SHOP BRACELETS
+           </Link>
+        </div>
+      </div>
+    )
+  }
+
   // If already paid/verification_required, don't let them pay again, redirect to confirmed page
   if (order.payment_status !== 'pending' && order.payment_status !== 'failed') {
     redirect(`/order-confirmed/${order.order_number}`)

@@ -2,10 +2,14 @@ import { createClient } from '@/utils/supabase/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import AddToCartButton from '@/components/AddToCartButton'
+import { releaseExpiredReservations } from '@/utils/cleanup'
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const supabase = await createClient()
+  
+  // Lazily cleanup expired stock reservations
+  await releaseExpiredReservations()
   
   const { data: product } = await supabase
     .from('products')

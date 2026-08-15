@@ -1,7 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
 import { ChevronDown, ShoppingBag } from 'lucide-react'
-
+import { releaseExpiredReservations } from '@/utils/cleanup'
 export default async function ShopPage({
   searchParams,
 }: {
@@ -9,6 +9,9 @@ export default async function ShopPage({
 }) {
   const supabase = await createClient()
   const { category: categorySlug } = await searchParams
+
+  // Lazily cleanup expired stock reservations
+  await releaseExpiredReservations()
 
   // Fetch all categories for the filter
   const { data: categories } = await supabase

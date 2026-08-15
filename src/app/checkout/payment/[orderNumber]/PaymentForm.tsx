@@ -1,13 +1,15 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { submitPaymentVerification } from './actions'
+import { submitPaymentVerification, cancelPreorder } from './actions'
 
 import { useCartStore } from '@/store/cart'
 
 export function PaymentForm({ orderId, orderNumber }: { orderId: string, orderNumber: string }) {
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isCancelling, setIsCancelling] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isCancelled, setIsCancelled] = useState(false)
   const { clearCart } = useCartStore()
 
   useEffect(() => {
@@ -38,6 +40,45 @@ export function PaymentForm({ orderId, orderNumber }: { orderId: string, orderNu
     }
   }
 
+  async function handleCancel() {
+    if (!window.confirm("Cancel this pre-order?\n\nYour payment has not been submitted yet. Cancelling will release the reserved stock.")) {
+      return
+    }
+    
+    setIsCancelling(true)
+    setError(null)
+    
+    try {
+      const result = await cancelPreorder(orderId, orderNumber)
+      if (result?.error) {
+        setError(result.error)
+        setIsCancelling(false)
+      } else {
+        setIsCancelled(true)
+      }
+    } catch (err: any) {
+      setError(err.message || "Failed to cancel")
+      setIsCancelling(false)
+    }
+  }
+
+  if (isCancelled) {
+    return (
+      <div className="max-w-sm mx-auto text-center">
+        <h3 className="text-xl font-black text-black mb-4">Pre-order cancelled</h3>
+        <p className="text-gray-600 font-medium mb-8">
+          Your reserved stock has been released. No payment was confirmed.
+        </p>
+        <a 
+          href="/shop"
+          className="block w-full bg-black text-white py-4 rounded-full text-[13px] font-bold tracking-widest hover:bg-brand-accent transition-all duration-300 uppercase"
+        >
+          Continue Shopping
+        </a>
+      </div>
+    )
+  }
+
   return (
     <form action={handleSubmit} className="max-w-sm mx-auto text-left">
       <h3 className="text-[15px] font-black text-black mb-4 text-center">Payment completed?</h3>
@@ -63,10 +104,19 @@ export function PaymentForm({ orderId, orderNumber }: { orderId: string, orderNu
 
       <button
         type="submit"
-        disabled={isSubmitting}
-        className="w-full bg-black text-white py-4 rounded-full text-[13px] font-bold tracking-widest hover:bg-brand-accent transition-all duration-300 disabled:bg-gray-300 disabled:cursor-not-allowed uppercase"
+        disabled={isSubmitting || isCancelling}
+        className="w-full bg-black text-white py-4 rounded-full text-[13px] font-bold tracking-widest hover:bg-brand-accent transition-all duration-300 disabled:bg-gray-300 disabled:cursor-not-allowed uppercase mb-4"
       >
         {isSubmitting ? 'Submitting...' : "I've Paid — Submit for Verification"}
+      </button>
+      
+      <button
+        type="button"
+        onClick={handleCancel}
+        disabled={isSubmitting || isCancelling}
+        className="w-full bg-transparent text-gray-500 py-2 rounded-full text-[13px] font-bold hover:text-red-600 transition-colors disabled:opacity-50"
+      >
+        Cancel this pre-order
       </button>
     </form>
   )
