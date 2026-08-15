@@ -34,74 +34,82 @@ export async function createProduct(formData: FormData) {
   const tagsString = formData.get('tags') as string
   const tags = tagsString ? tagsString.split(',').map(t => t.trim()) : []
 
-  // 1. Insert product
-  const { data: product, error: productError } = await supabase
-    .from('products')
-    .insert({
-      name,
-      slug,
-      short_description,
-      description,
-      price,
-      compare_at_price,
-      stock_quantity,
-      sku,
-      status,
-      category_id,
-      is_featured,
-      is_bestseller,
-      is_new_arrival,
-      show_on_homepage,
-      tags
-    })
-    .select()
-    .single()
+  try {
+    // 1. Insert product
+    const { data: product, error: productError } = await supabase
+      .from('products')
+      .insert({
+        name,
+        slug,
+        short_description,
+        description,
+        price,
+        compare_at_price,
+        stock_quantity,
+        sku,
+        status,
+        category_id,
+        is_featured,
+        is_bestseller,
+        is_new_arrival,
+        show_on_homepage,
+        tags
+      })
+      .select()
+      .single()
 
-  if (productError) {
-    console.error('Error creating product:', productError)
-    redirect(`/admin/products/create?error=${encodeURIComponent(productError.message || 'Unknown error')}`)
-  }
+    if (productError) {
+      console.error('Error creating product:', productError)
+      redirect(`/admin/products/create?error=${encodeURIComponent(productError.message || 'Unknown error')}`)
+    }
 
-  // 2. Handle image uploads
-  const images = formData.getAll('images') as File[]
-  
-  if (images && images.length > 0) {
-    for (let i = 0; i < images.length; i++) {
-      const image = images[i]
-      if (image.size === 0) continue
+    // 2. Handle image uploads
+    const images = formData.getAll('images') as File[]
+    
+    if (images && images.length > 0) {
+      for (let i = 0; i < images.length; i++) {
+        const image = images[i]
+        if (!image || typeof image === 'string' || image.size === 0 || !image.name) continue
 
-      const fileExt = image.name.split('.').pop()
-      const fileName = `${product.id}-${Date.now()}-${i}.${fileExt}`
-      
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('product-images')
-        .upload(fileName, image)
-
-      if (uploadError) {
-        console.error('Error uploading image:', uploadError)
-        // Clean up the product if image upload fails
-        await supabase.from('products').delete().eq('id', product.id)
-        redirect(`/admin/products/create?error=${encodeURIComponent('Image upload failed: ' + uploadError.message)}`)
-      }
-
-      if (uploadData) {
-        const { data: { publicUrl } } = supabase.storage
+        const fileExt = image.name.split('.').pop()
+        const fileName = `${product.id}-${Date.now()}-${i}.${fileExt}`
+        
+        const { data: uploadData, error: uploadError } = await supabase.storage
           .from('product-images')
-          .getPublicUrl(fileName)
+          .upload(fileName, image)
 
-        // Insert into product_images
-        await supabase.from('product_images').insert({
-          product_id: product.id,
-          url: publicUrl,
-          is_primary: i === 0, // First image is primary
-          display_order: i
-        })
+        if (uploadError) {
+          console.error('Error uploading image:', uploadError)
+          // Clean up the product if image upload fails
+          await supabase.from('products').delete().eq('id', product.id)
+          redirect(`/admin/products/create?error=${encodeURIComponent('Image upload failed: ' + uploadError.message)}`)
+        }
+
+        if (uploadData) {
+          const { data: { publicUrl } } = supabase.storage
+            .from('product-images')
+            .getPublicUrl(fileName)
+
+          // Insert into product_images
+          await supabase.from('product_images').insert({
+            product_id: product.id,
+            url: publicUrl,
+            is_primary: i === 0, // First image is primary
+            display_order: i
+          })
+        }
       }
     }
-  }
 
-  revalidatePath('/admin/products')
-  redirect('/admin/products')
+    revalidatePath('/admin/products')
+    redirect('/admin/products')
+  } catch (error: any) {
+    if (error && error.digest && error.digest.startsWith('NEXT_REDIRECT')) {
+      throw error
+    }
+    console.error('Unhandled error in createProduct:', error)
+    redirect(`/admin/products/create?error=${encodeURIComponent(error.message || 'An unexpected error occurred')}`)
+  }
 }
 
 export async function deleteProduct(formData: FormData) {

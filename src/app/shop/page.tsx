@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
-import { ChevronDown, Maximize2, ShoppingBag, LayoutGrid } from 'lucide-react'
+import { ChevronDown, ShoppingBag } from 'lucide-react'
 
 export default async function ShopPage({
   searchParams,
@@ -37,112 +37,114 @@ export default async function ShopPage({
   const title = currentCategory ? currentCategory.name : 'Shop'
 
   return (
-    <div className="w-full pb-32">
-       {/* The Big Pink Header matching the yellow one in the reference */}
-       <div className="bg-gradient-to-b from-[#FFA7C1] to-[#FFDDE6] rounded-[3rem] pt-20 pb-48 px-8 sm:px-12 relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center">
-          
-          {/* The circular concentric decorative shapes in the center top */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-white/20 blur-3xl pointer-events-none"></div>
-          <div className="absolute top-[-100px] left-1/2 -translate-x-1/2 w-96 h-96 rounded-full border border-white/40 pointer-events-none"></div>
-          <div className="absolute top-[-150px] left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full border border-white/20 pointer-events-none"></div>
+    <div className="w-full pb-32 bg-white">
+       {/* 1. SHOP HERO - Compact Pink Header */}
+       <div className="bg-brand-soft-pink/30 pt-16 pb-16 px-6 sm:px-12 relative overflow-hidden text-center border-b border-brand-rose/20">
+          <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center">
+            {/* Breadcrumb */}
+            <div className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">
+               <Link href="/" className="hover:text-black transition-colors">Home</Link>
+               <span className="mx-2">/</span>
+               <span className="text-black">{title}</span>
+            </div>
 
-          {/* Breadcrumb Left */}
-          <div className="relative z-10 text-sm font-bold text-[#A53F58] mb-8 md:mb-0 w-full md:w-1/3 text-left">
-             Home / <span className="text-[#6C2537]">{title}</span>
-          </div>
+            {/* Title */}
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-black tracking-tight mb-4">{title}</h1>
+            
+            {/* Supporting Text */}
+            <p className="text-gray-500 font-medium text-sm sm:text-base max-w-lg mb-8">
+               Discover handcrafted bracelets made to keep. Explore our collection of premium pieces.
+            </p>
 
-          {/* Center Title */}
-          <div className="relative z-10 w-full md:w-1/3 flex justify-center mb-8 md:mb-0">
-             <h1 className="text-5xl md:text-6xl font-black text-black tracking-tight text-center">{title}</h1>
-          </div>
-
-          {/* Right Controls */}
-          <div className="relative z-10 flex flex-col sm:flex-row items-center gap-4 text-xs font-bold text-[#A53F58] w-full md:w-1/3 md:justify-end">
-             <span>Showing 1-{products?.length || 0} of {products?.length || 0} results</span>
-             <button className="bg-white/60 hover:bg-white backdrop-blur-sm px-4 py-2 rounded-full flex items-center gap-2 text-black transition-colors shadow-sm">
-               Default sorting
-               <ChevronDown className="w-4 h-4" />
-             </button>
-          </div>
-       </div>
-
-       {/* Category Filters */}
-       <div className="relative z-30 px-4 md:px-8 -mt-40 mb-12 flex justify-center">
-         <div className="bg-white p-2 rounded-full shadow-lg border-2 border-black flex items-center gap-2 overflow-x-auto max-w-full custom-scrollbar">
-           <Link 
-             href="/shop" 
-             className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm transition-all whitespace-nowrap ${!categorySlug ? 'bg-neo-yellow text-black shadow-[2px_2px_0_0_#000] border-2 border-black' : 'text-gray-600 hover:text-black hover:bg-gray-100'}`}
-           >
-             <LayoutGrid className="w-4 h-4" />
-             All Products
-           </Link>
-           {categories?.map(category => (
-             <Link 
-               key={category.id} 
-               href={`/shop?category=${category.slug}`}
-               className={`px-5 py-2.5 rounded-full font-bold text-sm transition-all whitespace-nowrap ${categorySlug === category.slug ? 'bg-neo-blue text-black shadow-[2px_2px_0_0_#000] border-2 border-black' : 'text-gray-600 hover:text-black hover:bg-gray-100'}`}
-             >
-               {category.name}
-             </Link>
-           ))}
-         </div>
-       </div>
-
-       {/* Product Grid - overlaps the header */}
-       <div className="relative z-20 px-4 md:px-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10 max-w-[1400px] mx-auto">
-             {products?.map((product, i) => {
-                // Alternate pill colors for a playful look similar to the reference
-                const pillColors = ['bg-[#FF7A9A]', 'bg-[#988DF2]', 'bg-[#4EC58C]', 'bg-[#FFA552]'];
-                const pillColor = pillColors[i % pillColors.length];
-
-                return (
-                  <Link href={`/product/${product.slug}`} key={product.id} className="group bg-white rounded-[2.5rem] p-6 pb-8 shadow-md hover:shadow-2xl transition-all duration-300 relative border border-transparent">
-                     
-                     {/* Top Icons */}
-                     <div className="w-full flex justify-between items-center mb-4 relative z-30 px-2 text-gray-800">
-                        <div className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors">
-                           <Maximize2 className="w-[14px] h-[14px] stroke-[2.5]" />
-                        </div>
-                        <div className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors">
-                           <ShoppingBag className="w-[14px] h-[14px] stroke-[2.5]" />
-                        </div>
-                     </div>
-
-                     {/* Image Container */}
-                     <div className="w-full h-52 relative flex items-center justify-center mb-8">
-                        {/* The Colorful Pill */}
-                        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4/5 h-24 rounded-[2rem] ${pillColor}`}></div>
-                        {/* The Sun Circle */}
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full bg-white opacity-40"></div>
-                        
-                        {/* Bracelet Image */}
-                        {product.product_images?.[0]?.url ? (
-                          <img
-                            src={product.product_images[0].url}
-                            alt={product.name}
-                            className="relative z-20 h-44 object-contain drop-shadow-[0_20px_20px_rgba(0,0,0,0.15)] group-hover:scale-110 transition-transform duration-500 group-hover:-rotate-6"
-                          />
-                        ) : (
-                          <div className="relative z-20 text-[#8C3A4A] font-bold">No Image</div>
-                        )}
-                     </div>
-
-                     {/* Content below image */}
-                     <div className="text-center w-full z-20 px-4">
-                        <p className="text-[#645A8A] font-bold mb-1 truncate text-[15px]">{product.category?.name || 'Uncategorized'}</p>
-                        <p className="text-gray-400 font-bold text-[15px]">₹{product.price}</p>
-                     </div>
+            {/* Category Filters */}
+            <div className="w-full max-w-3xl overflow-x-auto custom-scrollbar pb-2">
+              <div className="flex justify-center min-w-max gap-3 mx-auto px-4">
+                <Link 
+                  href="/shop" 
+                  className={`px-5 py-2.5 rounded-full font-bold text-[13px] transition-all whitespace-nowrap border-2 ${!categorySlug ? 'bg-black text-white border-black' : 'bg-white text-gray-600 border-gray-200 hover:border-black hover:text-black'}`}
+                >
+                  ALL PRODUCTS
+                </Link>
+                {categories?.map(category => (
+                  <Link 
+                    key={category.id} 
+                    href={`/shop?category=${category.slug}`}
+                    className={`px-5 py-2.5 rounded-full font-bold text-[13px] transition-all whitespace-nowrap border-2 ${categorySlug === category.slug ? 'bg-black text-white border-black' : 'bg-white text-gray-600 border-gray-200 hover:border-black hover:text-black'}`}
+                  >
+                    {category.name.toUpperCase()}
                   </Link>
-                );
-             })}
+                ))}
+              </div>
+            </div>
           </div>
+       </div>
 
-          {(!products || products.length === 0) && (
-            <div className="py-20 text-center">
-              <p className="text-xl font-bold text-gray-900">No products found in this category.</p>
-              <Link href="/shop" className="inline-block mt-6 px-6 py-3 bg-black text-white font-bold rounded-full">
-                View All Products
+       {/* Sub-header Controls (Sorting / Count) */}
+       <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <span className="text-sm font-bold text-gray-500 uppercase tracking-widest">
+            {products?.length || 0} {products?.length === 1 ? 'Product' : 'Products'}
+          </span>
+          <button className="flex items-center gap-2 text-xs font-bold text-black uppercase tracking-widest hover:text-brand-accent transition-colors">
+            Default sorting
+            <ChevronDown className="w-4 h-4" />
+          </button>
+       </div>
+
+       {/* 2. PRODUCT GRID */}
+       <div className="px-4 md:px-8 pb-20 max-w-[1400px] mx-auto">
+          {products && products.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6 lg:gap-8">
+               {products.map((product) => (
+                 <Link href={`/product/${product.slug}`} key={product.id} className="group flex flex-col">
+                    {/* Image Area */}
+                    <div className="relative w-full aspect-[4/5] bg-gray-50 rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden mb-4 sm:mb-5 border border-gray-100 flex items-center justify-center">
+                       {product.product_images?.[0]?.url ? (
+                         <img
+                           src={product.product_images[0].url}
+                           alt={product.name}
+                           className="absolute w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out"
+                         />
+                       ) : (
+                         <div className="w-full h-full flex flex-col items-center justify-center text-gray-300">
+                           <span className="text-xl sm:text-2xl font-black opacity-20">THREEKNOTS</span>
+                         </div>
+                       )}
+
+                       {/* Optional Preorder Badge if applicable */}
+                       {product.status === 'preorder' && (
+                         <div className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-brand-accent text-white text-[10px] sm:text-[11px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full">
+                           PRE-ORDER
+                         </div>
+                       )}
+                    </div>
+
+                    {/* Text Content */}
+                    <div className="px-1">
+                       <p className="text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 sm:mb-1.5 truncate">
+                         {product.category?.name || 'Uncategorized'}
+                       </p>
+                       <h3 className="text-[13px] sm:text-[15px] font-black text-black leading-snug mb-1 sm:mb-1.5 line-clamp-2 group-hover:text-brand-accent transition-colors">
+                         {product.name}
+                       </h3>
+                       <p className="text-[13px] sm:text-[15px] font-bold text-black">
+                         ₹{product.price}
+                       </p>
+                    </div>
+                 </Link>
+               ))}
+            </div>
+          ) : (
+            /* 5. EMPTY SHOP STATE */
+            <div className="py-32 flex flex-col items-center justify-center text-center px-4">
+              <div className="w-20 h-20 bg-brand-soft-pink/30 rounded-full flex items-center justify-center mb-6">
+                 <ShoppingBag className="w-8 h-8 text-brand-accent opacity-50" />
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-black text-black mb-3">New bracelets are coming soon.</h2>
+              <p className="text-gray-500 font-medium max-w-md mx-auto mb-8 text-[15px]">
+                Handcrafted pieces are on the way. Check back soon.
+              </p>
+              <Link href="/about" className="bg-black text-white px-8 py-4 rounded-full text-[13px] font-bold uppercase tracking-widest hover:bg-brand-accent transition-colors">
+                EXPLORE OUR STORY
               </Link>
             </div>
           )}
